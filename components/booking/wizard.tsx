@@ -36,11 +36,13 @@ export function BookingWizard() {
     return new Date(d.getFullYear(), d.getMonth(), 1);
   });
   const [form, setForm] = useState({
-    customerName: "",
+    firstName: "",
+    lastName: "",
     customerPhone: "",
     customerEmail: "",
     notes: "",
   });
+  const [depositAmount, setDepositAmount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -51,6 +53,7 @@ export function BookingWizard() {
         setServices(data.services);
         setStyles(data.styles);
         setStylists(data.stylists);
+        setDepositAmount(Number(data.depositAmount ?? 0));
         const svcParam = params.get("service");
         const styleParam = params.get("style");
         if (svcParam) {
@@ -106,8 +109,8 @@ export function BookingWizard() {
     if (step === 3 && !date) return setError("Please choose a date.");
     if (step === 4 && !time) return setError("Please choose a time.");
     if (step === 5) {
-      if (!form.customerName || !form.customerPhone || !form.customerEmail) {
-        return setError("Name, phone, and email are required.");
+      if (!form.firstName || !form.lastName || !form.customerPhone || !form.customerEmail) {
+        return setError("First name, last name, phone, and email are required.");
       }
     }
     setStep((s) => Math.min(s + 1, 6));
@@ -125,16 +128,33 @@ export function BookingWizard() {
         stylistId,
         date,
         time,
-        ...form,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        customerName: `${form.firstName} ${form.lastName}`.trim(),
+        customerPhone: form.customerPhone,
+        customerEmail: form.customerEmail,
+        notes: form.notes,
       }),
     });
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error ?? "Could not complete booking.");
+      setError(data.error ?? data.message ?? "Could not complete booking.");
       return;
     }
-    router.push(`/book/success?ref=${data.appointment.reference}`);
+    const paymentUrl = data.payment?.payment_url as string | undefined;
+    const remoteId = data.appointment?.id;
+    if (paymentUrl) {
+      if (remoteId != null) {
+        sessionStorage.setItem("pendingAppointmentId", String(remoteId));
+      }
+      window.location.href = paymentUrl;
+      return;
+    }
+    const ref = data.appointment?.reference ?? "";
+    const query = new URLSearchParams({ ref: String(ref) });
+    if (remoteId != null) query.set("appointment_id", String(remoteId));
+    router.push(`/book/success?${query.toString()}`);
   }
 
   return (
@@ -293,11 +313,18 @@ export function BookingWizard() {
 
         {step === 5 ? (
           <form className="grid gap-5" onSubmit={(e) => e.preventDefault()}>
-            <Field
-              label="Full Name"
-              value={form.customerName}
-              onChange={(v) => setForm({ ...form, customerName: v })}
-            />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field
+                label="First Name"
+                value={form.firstName}
+                onChange={(v) => setForm({ ...form, firstName: v })}
+              />
+              <Field
+                label="Last Name"
+                value={form.lastName}
+                onChange={(v) => setForm({ ...form, lastName: v })}
+              />
+            </div>
             <Field
               label="Phone Number"
               value={form.customerPhone}
@@ -330,13 +357,13 @@ export function BookingWizard() {
               <Row k="Time" v={time ? formatTime(time) : ""} />
               <Row k="Duration" v={formatDuration(durationMin)} />
               <Row k="From" v={formatPrice(price)} />
-              <Row k="Name" v={form.customerName} />
+              <Row k="Name" v={`${form.firstName} ${form.lastName}`.trim()} />
               <Row k="Contact" v={`${form.customerPhone} · ${form.customerEmail}`} />
             </dl>
             <p className="mt-6 text-xs leading-relaxed text-muted">
-              A deposit of {formatPrice(Math.min(50, Math.round(price * 0.15)))} will
-              be requested to hold the chair. Online deposit payment can be enabled
-              with Stripe when you are ready — the structure is already in place.
+              {depositAmount > 0
+                ? `A deposit of ${formatPrice(depositAmount)} may be collected online to hold the chair. You will be redirected to a secure checkout if payment is required.`
+                : "Your appointment is reserved with the atelier. A deposit may be requested later to hold the chair."}
             </p>
           </div>
         ) : null}
@@ -356,7 +383,7 @@ export function BookingWizard() {
             <Button onClick={next}>Continue</Button>
           ) : (
             <Button onClick={confirm} disabled={loading}>
-              {loading ? "Reserving…" : "Confirm Appointment"}
+              {loading ? "Reserving…" : depositAmount > 0 ? "Confirm & Pay Deposit" : "Confirm Appointment"}
             </Button>
           )}
         </div>

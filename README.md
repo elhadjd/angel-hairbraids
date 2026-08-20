@@ -19,11 +19,22 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Booking & email
+## Booking (SISGESC)
 
-Appointments are saved to `data/salon.json`. Confirmation emails are written to `data/emails/`. To send live mail, set `RESEND_API_KEY` and `EMAIL_FROM`.
+The booking wizard posts to `/api/appointments`. That route:
 
-Deposits are modeled on every appointment (`unpaid` / `paid` / `waived`) so Stripe (or another processor) can be attached later without changing the booking contract.
+1. Holds the chair locally
+2. Forwards `first_name`, `last_name`, `email`, `phone`, `date`, `time`, `service`, and `notes` to `POST {SITE_API_HOST}/api/site/appointments/submit`
+3. If `SITE_API_DEPOSIT_AMOUNT` is set, also sends `amount`, `success_url`, and `cancel_url`. When SISGESC returns `payment.payment_url`, the client is redirected to Stripe. After checkout, `/book/success` calls `POST /api/site/appointments/confirm-payment`.
+
+Optional env:
+
+```
+SITE_API_DEPARTMENT_ID=3
+SITE_API_DEPOSIT_AMOUNT=15
+```
+
+If SISGESC is not configured, the appointment is still stored locally.
 
 ## Contact form (SISGESC)
 

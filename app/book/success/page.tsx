@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SiteShell } from "@/components/layout/site-shell";
 import { Button, Container } from "@/components/ui/button";
+import { ConfirmDeposit } from "@/components/booking/confirm-deposit";
 
 export const metadata: Metadata = {
   title: "Appointment Reserved",
@@ -9,9 +11,14 @@ export const metadata: Metadata = {
 export default async function SuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ref?: string | string[] }>;
+  searchParams: Promise<{
+    ref?: string | string[];
+    appointment_id?: string | string[];
+    session_id?: string | string[];
+  }>;
 }) {
   const { ref } = await searchParams;
+  const reference = Array.isArray(ref) ? ref[0] : ref;
 
   return (
     <SiteShell>
@@ -25,11 +32,14 @@ export default async function SuccessPage({
             A confirmation has been sent to your email. Please arrive ten minutes
             early. We cannot wait to create your next look.
           </p>
-          {ref ? (
+          {reference ? (
             <p className="mt-8 text-sm tracking-[0.28em] uppercase text-gold">
-              Reference {Array.isArray(ref) ? ref[0] : ref}
+              Reference {reference}
             </p>
           ) : null}
+          <Suspense>
+            <ConfirmDeposit />
+          </Suspense>
           <div className="mt-10 flex justify-center gap-4">
             <Button href="/account" variant="gold">
               View My Visits

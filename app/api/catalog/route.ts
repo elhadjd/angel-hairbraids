@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { siteDepositAmount } from "@/lib/sisgesc";
 import { readStore } from "@/lib/store";
 
 export async function GET(request: NextRequest) {
@@ -14,5 +15,6 @@ export async function GET(request: NextRequest) {
         )
       : store.styles,
     stylists: store.stylists,
+    depositAmount: siteDepositAmount(),
   });
 }

@@ -98,6 +98,8 @@ export type Appointment = {
     amount: number;
     status: DepositStatus;
   };
+  externalId?: string;
+  provider?: "sisgesc" | "local";
   createdAt: string;
   updatedAt: string;
 };
@@ -149,6 +151,8 @@ export type BookingPayload = {
   stylistId: string;
   date: string;
   time: string;
+  firstName?: string;
+  lastName?: string;
   customerName: string;
   customerPhone: string;
   customerEmail: string;

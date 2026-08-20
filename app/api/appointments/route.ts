@@ -2,7 +2,26 @@ import { NextRequest } from "next/server";
 import { createId, createReference, readStore, updateStore } from "@/lib/store";
 import { confirmationHtml, sendConfirmationEmail } from "@/lib/email";
 import { getAvailableSlots } from "@/lib/availability";
+import {
+  isSiteApiConfigured,
+  siteDepositAmount,
+  splitPersonName,
+  submitSiteAppointment,
+} from "@/lib/sisgesc";
+import { site } from "@/lib/site";
 import type { Appointment, BookingPayload } from "@/lib/types";
+
+function requestOrigin(request: NextRequest) {
+  const headerOrigin = request.headers.get("origin");
+  if (headerOrigin) return headerOrigin.replace(/\/$/, "");
+  const host =
+    request.headers.get("x-forwarded-host") || request.headers.get("host");
+  if (host) {
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    return `${proto}://${host}`;
+  }
+  return site.url.replace(/\/$/, "");
+}
 
 export async function GET() {
   const store = await readStore();
@@ -18,7 +37,6 @@ export async function POST(request: NextRequest) {
     "stylistId",
     "date",
     "time",
-    "customerName",
     "customerPhone",
     "customerEmail",
   ] as const;
@@ -27,6 +45,15 @@ export async function POST(request: NextRequest) {
     if (!body[key]) {
       return Response.json({ error: `Missing ${key}` }, { status: 400 });
     }
+  }
+
+  const split = splitPersonName(body.customerName ?? "");
+  const firstName = (body.firstName ?? split.firstName).trim();
+  const lastName = (body.lastName ?? split.lastName).trim();
+  const customerName = `${firstName} ${lastName}`.trim();
+
+  if (!firstName || !lastName) {
+    return Response.json({ error: "First name and last name are required." }, { status: 400 });
   }
 
   const store = await readStore();
@@ -57,6 +84,58 @@ export async function POST(request: NextRequest) {
   }
 
   const now = new Date().toISOString();
+  const depositAmount = siteDepositAmount() || Math.min(50, Math.round(price * 0.15));
+  const origin = requestOrigin(request);
+
+  let provider: "sisgesc" | "local" = "local";
+  let externalId: string | undefined;
+  let payment: Record<string, unknown> | null = null;
+  let remoteMessage = "";
+
+  if (isSiteApiConfigured()) {
+    try {
+      const result = await submitSiteAppointment({
+        firstName,
+        lastName,
+        email: body.customerEmail.trim().toLowerCase(),
+        phone: body.customerPhone.trim().slice(0, 20),
+        date: body.date,
+        time: body.time.length === 5 ? body.time : body.time.slice(0, 5),
+        service: service.name,
+        notes: (body.notes ?? "").trim() || undefined,
+        metadata: {
+          style: style?.name,
+          stylist: stylist.name,
+          duration_min: durationMin,
+        },
+        origin,
+      });
+
+      if (result.status === 422) {
+        const message =
+          (result.data.message as string) ||
+          "Please check your booking details.";
+        return Response.json({ error: message, details: result.data }, { status: 422 });
+      }
+
+      if (result.status === 403) {
+        return Response.json({ error: "Unauthorized" }, { status: 403 });
+      }
+
+      if (result.status === 201 || result.ok) {
+        provider = "sisgesc";
+        const apt = (result.data.appointment ?? {}) as Record<string, unknown>;
+        if (apt.id != null) externalId = String(apt.id);
+        payment = (result.data.payment as Record<string, unknown>) ?? null;
+        remoteMessage = String(result.data.message ?? "");
+      } else {
+        console.error("SISGESC appointment error", result.status, result.data);
+      }
+    } catch (error) {
+      console.error("SISGESC appointment request failed", error);
+    }
+  }
+
   const appointment: Appointment = {
     id: createId("apt"),
     reference: createReference(),
@@ -68,15 +147,17 @@ export async function POST(request: NextRequest) {
     durationMin,
     price,
     status: "pending",
-    customerName: body.customerName.trim(),
-    customerPhone: body.customerPhone.trim(),
+    customerName,
+    customerPhone: body.customerPhone.trim().slice(0, 20),
     customerEmail: body.customerEmail.trim().toLowerCase(),
     notes: (body.notes ?? "").trim(),
     deposit: {
-      required: true,
-      amount: Math.min(50, Math.round(price * 0.15)),
-      status: "unpaid",
+      required: Boolean(siteDepositAmount() || payment),
+      amount: depositAmount,
+      status: payment?.status === "pending" ? "unpaid" : "unpaid",
     },
+    externalId,
+    provider,
     createdAt: now,
     updatedAt: now,
   };
@@ -134,5 +215,18 @@ export async function POST(request: NextRequest) {
     html,
   });
 
-  return Response.json({ appointment });
+  return Response.json(
+    {
+      success: true,
+      message: remoteMessage || "Appointment created successfully.",
+      appointment: {
+        ...appointment,
+        id: externalId ?? appointment.id,
+        localId: appointment.id,
+        reference: appointment.reference,
+      },
+      payment,
+    },
+    { status: 201 },
+  );
 }
