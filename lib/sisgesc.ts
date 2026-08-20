@@ -47,11 +47,6 @@ export function siteDepositAmount() {
   return Number.isFinite(n) && n >= 0.01 ? n : 0;
 }
 
-export function siteDepartmentId() {
-  const n = Number(process.env.SITE_API_DEPARTMENT_ID ?? 0);
-  return Number.isInteger(n) && n > 0 ? n : undefined;
-}
-
 async function siteApiPost(
   path: string,
   body: Record<string, unknown>,
@@ -99,7 +94,6 @@ export async function submitSiteContact(payload: ContactPayload) {
 
 export async function submitSiteAppointment(payload: AppointmentPayload) {
   const amount = siteDepositAmount();
-  const departmentId = siteDepartmentId();
   const body: Record<string, unknown> = {
     first_name: payload.firstName,
     last_name: payload.lastName,
@@ -115,8 +109,6 @@ export async function submitSiteAppointment(payload: AppointmentPayload) {
       ...payload.metadata,
     },
   };
-
-  if (departmentId) body.department_id = departmentId;
 
   if (amount > 0) {
     body.amount = amount;

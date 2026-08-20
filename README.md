@@ -27,10 +27,11 @@ The booking wizard posts to `/api/appointments`. That route:
 2. Forwards `first_name`, `last_name`, `email`, `phone`, `date`, `time`, `service`, and `notes` to `POST {SITE_API_HOST}/api/site/appointments/submit`
 3. If `SITE_API_DEPOSIT_AMOUNT` is set, also sends `amount`, `success_url`, and `cancel_url`. When SISGESC returns `payment.payment_url`, the client is redirected to Stripe. After checkout, `/book/success` calls `POST /api/site/appointments/confirm-payment`.
 
+The request does not send `department_id`. SISGESC uses the first company department that has appointment configuration.
+
 Optional env:
 
 ```
-SITE_API_DEPARTMENT_ID=3
 SITE_API_DEPOSIT_AMOUNT=15
 ```
 
