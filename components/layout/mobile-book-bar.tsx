@@ -2,19 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { site } from "@/lib/site";
 
 export function MobileBookBar() {
   const pathname = usePathname();
   if (pathname.startsWith("/book") || pathname.startsWith("/admin")) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-gold/30 bg-ivory/95 p-3 backdrop-blur md:hidden">
-      <Link
-        href="/book"
-        className="flex h-12 items-center justify-center bg-gold text-[11px] tracking-[0.28em] uppercase text-ink"
-      >
-        Book Your Appointment
-      </Link>
+    <div
+      data-mobile-book-bar
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-gold/30 bg-ivory/95 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur md:hidden"
+    >
+      <div className="grid grid-cols-[1fr_auto] gap-2">
+        <Link
+          href="/book"
+          className="flex h-12 items-center justify-center bg-gold px-3 text-center text-[11px] tracking-[0.18em] uppercase text-ink"
+        >
+          Book Now
+        </Link>
+        <a
+          href={site.phoneHref}
+          className="flex h-12 items-center justify-center border border-gold/50 px-4 text-[11px] tracking-[0.18em] uppercase"
+        >
+          Call
+        </a>
+      </div>
     </div>
   );
 }

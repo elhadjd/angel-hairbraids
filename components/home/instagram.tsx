@@ -20,12 +20,12 @@ export function Instagram() {
         <Reveal>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="kicker">{site.instagramHandle}</p>
-              <h2 className="mt-3 font-display text-4xl sm:text-5xl">
+              <p className="kicker break-all">{site.instagramHandle}</p>
+              <h2 className="mt-3 font-display text-[2.1rem] leading-tight sm:text-5xl">
                 Follow Our Latest Styles
               </h2>
             </div>
-            <Button href={site.instagram} variant="ink">
+            <Button href={site.instagram} variant="ink" className="w-full sm:w-auto">
               Follow Us on Instagram
             </Button>
           </div>

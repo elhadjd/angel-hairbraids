@@ -7,29 +7,31 @@ export function Hero() {
   return (
     <section className="relative min-h-[100svh] bg-espresso text-ivory">
       <div className="grid min-h-[100svh] lg:grid-cols-12">
-        <div className="relative z-10 flex flex-col justify-end px-5 pb-16 pt-32 sm:px-8 sm:pb-20 lg:col-span-5 lg:justify-center lg:px-12 lg:pb-0 lg:pt-24">
+        <div className="relative z-10 flex flex-col justify-end px-4 pb-10 pt-28 sm:px-8 sm:pb-20 lg:col-span-5 lg:justify-center lg:px-12 lg:pb-0 lg:pt-24">
           <p className="kicker animate-fade-up">
             {site.address.city}, {site.address.state} · Est. {site.founded}
           </p>
-          <h1 className="animate-fade-up delay-1 mt-6 font-display text-[3.15rem] leading-[0.92] sm:text-6xl lg:text-[4.4rem] xl:text-[5.1rem]">
+          <h1 className="animate-fade-up delay-1 mt-5 font-display text-[2.45rem] leading-[0.95] sm:text-6xl lg:text-[4.4rem] xl:text-[5.1rem]">
             Where African
             <span className="italic text-gold"> Beauty </span>
             Meets Modern Style.
           </h1>
-          <p className="animate-fade-up delay-2 mt-6 max-w-md text-base leading-relaxed text-ivory/70 sm:text-lg">
+          <p className="animate-fade-up delay-2 mt-5 max-w-md text-sm leading-relaxed text-ivory/70 sm:mt-6 sm:text-lg">
             A private atelier specializing in knotless braids, box braids,
             cornrows, and ceremonial African styles — crafted with patience,
             precision, and reverence for the hair.
           </p>
-          <div className="animate-fade-up delay-3 mt-10 flex flex-col gap-3 sm:flex-row">
-            <Button href="/book">Book Your Appointment</Button>
-            <Button href="/gallery" variant="ghost">
+          <div className="animate-fade-up delay-3 mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
+            <Button href="/book" className="w-full sm:w-auto">
+              Book Your Appointment
+            </Button>
+            <Button href="/gallery" variant="ghost" className="w-full sm:w-auto">
               Explore Our Styles
             </Button>
           </div>
         </div>
 
-        <div className="relative min-h-[62vh] lg:col-span-7 lg:min-h-[100svh]">
+        <div className="relative min-h-[48vh] sm:min-h-[62vh] lg:col-span-7 lg:min-h-[100svh]">
           <Image
             src="/images/hero-portrait.jpg"
             alt="Editorial portrait of a woman with honey-brown African box braids"

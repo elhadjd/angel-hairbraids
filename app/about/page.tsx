@@ -29,7 +29,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/40 to-espresso/20" />
         <Container className="relative flex min-h-[70vh] flex-col justify-end pb-16 pt-32">
           <p className="kicker">Est. 2014 · Columbus</p>
-          <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] sm:text-7xl">
+          <h1 className="mt-5 max-w-4xl font-display text-[2.4rem] leading-[1.05] sm:text-7xl">
             A house of braiding, culture, and quiet luxury.
           </h1>
         </Container>

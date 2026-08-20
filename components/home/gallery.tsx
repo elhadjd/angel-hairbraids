@@ -81,7 +81,7 @@ export function FeaturedGallery({ items }: { items: GalleryItem[] }) {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover"
                 />
-                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-ink/80 via-transparent to-transparent p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-ink/80 via-transparent to-transparent p-4 opacity-100 transition-opacity duration-500 sm:p-5 sm:opacity-0 sm:group-hover:opacity-100">
                   <p className="font-display text-2xl text-ivory">{item.title}</p>
                   <p className="mt-1 text-xs tracking-[0.18em] uppercase text-gold">
                     from {formatPrice(item.priceFrom)}

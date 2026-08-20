@@ -25,7 +25,7 @@ export default async function SuccessPage({
       <section className="flex min-h-[80vh] items-center bg-espresso text-ivory">
         <Container className="py-32 text-center">
           <p className="kicker">Confirmed</p>
-          <h1 className="mt-6 font-display text-5xl sm:text-7xl">
+          <h1 className="mt-6 font-display text-[2.35rem] leading-tight sm:text-7xl">
             You are on the book.
           </h1>
           <p className="mx-auto mt-6 max-w-lg text-ivory/70">
@@ -40,7 +40,7 @@ export default async function SuccessPage({
           <Suspense>
             <ConfirmDeposit />
           </Suspense>
-          <div className="mt-10 flex justify-center gap-4">
+          <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center sm:gap-4">
             <Button href="/account" variant="gold">
               View My Visits
             </Button>

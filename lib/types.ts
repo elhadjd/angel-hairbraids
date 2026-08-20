@@ -148,7 +148,7 @@ export type StoreData = {
 export type BookingPayload = {
   serviceId: string;
   styleId: string | null;
-  stylistId: string;
+  stylistId?: string | null;
   date: string;
   time: string;
   firstName?: string;

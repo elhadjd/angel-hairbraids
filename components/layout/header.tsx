@@ -43,7 +43,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
           solid ? "bg-ivory/92 backdrop-blur-md shadow-[0_1px_0_rgba(196,165,116,0.25)]" : "bg-transparent",
         )}
       >
-        <div className="mx-auto flex h-[4.5rem] max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center justify-between gap-3 px-4 sm:h-[4.5rem] sm:px-8 lg:px-12">
           <Link href="/" className="group flex items-center gap-3">
             <span
               className={cn(
@@ -53,10 +53,10 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
             >
               A
             </span>
-            <span className="leading-none">
+            <span className="min-w-0 leading-none">
               <span
                 className={cn(
-                  "block font-display text-[1.35rem] tracking-wide",
+                  "block font-display text-[1.25rem] tracking-wide sm:text-[1.35rem]",
                   lightText ? "text-ivory" : "text-ink",
                 )}
               >
@@ -64,7 +64,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
               </span>
               <span
                 className={cn(
-                  "block text-[9px] tracking-[0.28em] uppercase",
+                  "hidden text-[9px] tracking-[0.2em] uppercase sm:block",
                   lightText ? "text-gold-bright" : "text-gold",
                 )}
               >
@@ -104,7 +104,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
             </Link>
             <Link
               href="/book"
-              className="hidden bg-gold px-5 py-2.5 text-[11px] tracking-[0.24em] uppercase text-ink transition-colors hover:bg-gold-bright sm:inline-flex"
+              className="hidden bg-gold px-5 py-2.5 text-[11px] tracking-[0.24em] uppercase text-ink transition-colors hover:bg-gold-bright md:inline-flex"
             >
               Book
             </Link>
@@ -149,8 +149,8 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
           open ? "translate-y-0" : "-translate-y-full",
         )}
       >
-        <div className="flex h-full flex-col justify-between px-6 pb-10 pt-28">
-          <nav className="flex flex-col gap-2">
+        <div className="flex h-full flex-col justify-between overflow-y-auto px-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-24">
+          <nav className="flex flex-col gap-1">
             {[
               { href: "/", label: "Home" },
               ...links,
@@ -163,7 +163,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
                 onClick={() => setOpen(false)}
                 style={{ transitionDelay: open ? `${120 + i * 60}ms` : "0ms" }}
                 className={cn(
-                  "font-display text-4xl text-ink transition-all duration-500",
+                  "font-display text-[2.15rem] leading-tight text-ink transition-all duration-500 sm:text-4xl",
                   open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
                 )}
               >
@@ -171,8 +171,21 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
               </Link>
             ))}
           </nav>
-          <div>
-            <p className="kicker">Visit</p>
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              href="/book"
+              onClick={() => setOpen(false)}
+              className="flex h-12 items-center justify-center bg-gold text-[11px] tracking-[0.2em] uppercase text-ink"
+            >
+              Book Appointment
+            </Link>
+            <a
+              href={site.phoneHref}
+              className="flex h-12 items-center justify-center border border-gold/40 text-[11px] tracking-[0.2em] uppercase"
+            >
+              Call {site.phone}
+            </a>
+            <p className="kicker mt-4">Visit</p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted">
               {site.address.street}
               <br />

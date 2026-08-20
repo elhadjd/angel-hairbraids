@@ -43,6 +43,14 @@ body {
   color: var(--ink);
   font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
 }
 
 ::selection {
@@ -64,10 +72,30 @@ a {
 
 .kicker {
   font-size: 0.68rem;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--gold);
   font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .kicker {
+    letter-spacing: 0.34em;
+  }
+}
+
+.field {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  background: transparent;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  outline: none;
+}
+
+.field:focus {
+  border-bottom-color: var(--gold);
 }
 
 .gold-rule {
@@ -171,6 +199,12 @@ a {
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 767px) {
+  body:has([data-mobile-book-bar]) main {
+    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
   }
 }
 

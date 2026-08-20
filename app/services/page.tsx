@@ -53,8 +53,8 @@ export default async function ServicesPage() {
               <p className="mt-4 text-sm">
                 from {formatPrice(s.priceFrom)} · {formatDuration(s.durationMin, s.durationMax)}
               </p>
-              <div className="mt-5 flex gap-3">
-                <Button href={`/book?service=${s.slug}`}>Book Now</Button>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Button href={`/book?service=${s.slug}`} className="w-full sm:w-auto">Book Now</Button>
                 <Link
                   href={`/services/${s.slug}`}
                   className="self-center text-[11px] tracking-[0.22em] uppercase underline"

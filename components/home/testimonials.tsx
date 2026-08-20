@@ -47,7 +47,7 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                <p className="font-display text-3xl leading-snug sm:text-4xl lg:text-5xl">
+                <p className="font-display text-[1.65rem] leading-snug sm:text-4xl lg:text-5xl">
                   “{t.quote}”
                 </p>
                 <div className="mt-8 flex flex-wrap items-center gap-4">

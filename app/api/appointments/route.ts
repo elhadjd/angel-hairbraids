@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { createId, createReference, readStore, updateStore } from "@/lib/store";
 import { confirmationHtml, sendConfirmationEmail } from "@/lib/email";
-import { getAvailableSlots } from "@/lib/availability";
+import { assignStylist, getAvailableSlots } from "@/lib/availability";
 import {
   isSiteApiConfigured,
   siteDepositAmount,
@@ -34,7 +34,6 @@ export async function POST(request: NextRequest) {
   const body = (await request.json()) as BookingPayload;
   const required = [
     "serviceId",
-    "stylistId",
     "date",
     "time",
     "customerPhone",
@@ -58,17 +57,36 @@ export async function POST(request: NextRequest) {
 
   const store = await readStore();
   const service = store.services.find((s) => s.id === body.serviceId);
-  const stylist = store.stylists.find((s) => s.id === body.stylistId);
   const style = body.styleId
     ? store.styles.find((s) => s.id === body.styleId)
     : null;
 
-  if (!service || !stylist) {
-    return Response.json({ error: "Invalid service or stylist" }, { status: 400 });
+  if (!service) {
+    return Response.json({ error: "Invalid service" }, { status: 400 });
   }
 
   const durationMin = style?.durationMin ?? service.durationMin;
   const price = style?.priceFrom ?? service.priceFrom;
+  const stylist =
+    (body.stylistId
+      ? store.stylists.find((s) => s.id === body.stylistId)
+      : null) ??
+    assignStylist({
+      stylists: store.stylists,
+      date: body.date,
+      time: body.time,
+      durationMin,
+      appointments: store.appointments,
+      serviceId: service.id,
+    });
+
+  if (!stylist) {
+    return Response.json(
+      { error: "That time is no longer available." },
+      { status: 409 },
+    );
+  }
+
   const slots = getAvailableSlots({
     stylist,
     date: body.date,

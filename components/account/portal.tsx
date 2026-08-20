@@ -120,7 +120,7 @@ export function AccountPortal() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 w-full border-0 border-b border-gold/40 bg-transparent py-3 outline-none"
+              className="field mt-2"
             />
           </label>
           <label className="mt-6 block text-[11px] tracking-[0.22em] uppercase text-muted">
@@ -129,12 +129,14 @@ export function AccountPortal() {
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-2 w-full border-0 border-b border-gold/40 bg-transparent py-3 outline-none"
+              className="field mt-2"
             />
           </label>
           {error ? <p className="mt-4 text-sm text-clay">{error}</p> : null}
           <div className="mt-8">
-            <Button type="submit">Open My Visits</Button>
+            <Button type="submit" className="w-full sm:w-auto">
+              Open My Visits
+            </Button>
           </div>
           <p className="mt-6 text-xs text-muted">
             Try the sample client: maya.johnson@email.com · (404) 555-0192

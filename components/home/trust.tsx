@@ -29,7 +29,7 @@ export function Trust() {
       </div>
       <div className="grid gap-px bg-gold/20 sm:grid-cols-2 lg:grid-cols-4">
         {pillars.map((p) => (
-          <article key={p.title} className="bg-espresso px-8 py-12">
+          <article key={p.title} className="bg-espresso px-5 py-10 sm:px-8 sm:py-12">
             <p className="font-display text-2xl">{p.title}</p>
             <p className="mt-3 text-sm leading-relaxed text-ivory/60">{p.copy}</p>
           </article>

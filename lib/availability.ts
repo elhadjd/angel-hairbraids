@@ -21,6 +21,12 @@ export function isSalonOpen(date: string) {
   return weekdayFromISO(date) !== site.closedWeekday;
 }
 
+export function stylistsForService(stylists: Stylist[], serviceId?: string | null) {
+  if (!serviceId) return stylists;
+  const specialists = stylists.filter((s) => s.specialties.includes(serviceId));
+  return specialists.length > 0 ? specialists : stylists;
+}
+
 export function getAvailableSlots(input: {
   stylist: Stylist;
   date: string;
@@ -52,6 +58,49 @@ export function getAvailableSlots(input: {
     if (!overlaps) slots.push(fromMinutes(t));
   }
   return slots;
+}
+
+export function getSalonSlots(input: {
+  stylists: Stylist[];
+  date: string;
+  durationMin: number;
+  appointments: Appointment[];
+  serviceId?: string | null;
+}) {
+  const pool = stylistsForService(input.stylists, input.serviceId);
+  const unique = new Set<string>();
+  for (const stylist of pool) {
+    for (const slot of getAvailableSlots({
+      stylist,
+      date: input.date,
+      durationMin: input.durationMin,
+      appointments: input.appointments,
+    })) {
+      unique.add(slot);
+    }
+  }
+  return [...unique].sort();
+}
+
+export function assignStylist(input: {
+  stylists: Stylist[];
+  date: string;
+  time: string;
+  durationMin: number;
+  appointments: Appointment[];
+  serviceId?: string | null;
+}): Stylist | null {
+  const pool = stylistsForService(input.stylists, input.serviceId);
+  return (
+    pool.find((stylist) =>
+      getAvailableSlots({
+        stylist,
+        date: input.date,
+        durationMin: input.durationMin,
+        appointments: input.appointments,
+      }).includes(input.time),
+    ) ?? null
+  );
 }
 
 export function addMinutesToTime(time: string, minutes: number) {

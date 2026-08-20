@@ -34,8 +34,8 @@ export function GalleryModal({
         className="absolute inset-0"
         onClick={onClose}
       />
-      <article className="relative grid max-h-[92vh] w-full max-w-5xl overflow-hidden bg-ivory sm:grid-cols-2">
-        <div className="relative aspect-[3/4] sm:aspect-auto sm:min-h-[640px]">
+      <article className="relative grid max-h-[92svh] w-full max-w-5xl overflow-y-auto overflow-x-hidden bg-ivory sm:grid-cols-2 sm:overflow-hidden">
+        <div className="relative aspect-[4/5] max-h-[42svh] sm:max-h-none sm:aspect-auto sm:min-h-[640px]">
           <Image
             src={item.image}
             alt={item.title}
@@ -46,7 +46,7 @@ export function GalleryModal({
             className="object-cover"
           />
         </div>
-        <div className="flex flex-col justify-between p-8 sm:p-12">
+        <div className="flex flex-col justify-between p-5 sm:p-12">
           <div>
             <p className="kicker">{item.category}</p>
             <h3 className="mt-4 font-display text-4xl">{item.title}</h3>

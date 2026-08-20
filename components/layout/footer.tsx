@@ -6,11 +6,11 @@ export function Footer() {
   return (
     <footer className="relative overflow-hidden bg-espresso text-ivory">
       <div className="pattern-veil pointer-events-none absolute inset-0" />
-      <Container className="relative py-20">
-        <div className="grid gap-14 lg:grid-cols-12">
+      <Container className="relative py-16 sm:py-20">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-5">
             <p className="font-display text-4xl">Angel</p>
-            <p className="mt-1 text-[11px] tracking-[0.32em] uppercase text-gold">
+            <p className="mt-1 text-[10px] tracking-[0.22em] uppercase text-gold sm:text-[11px] sm:tracking-[0.32em]">
               African Hair Braiding
             </p>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/65">
@@ -18,7 +18,7 @@ export function Footer() {
               technique meets contemporary luxury.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-7">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-10 lg:col-span-7">
             <div>
               <p className="kicker">Explore</p>
               <ul className="mt-5 space-y-3 text-sm text-ivory/75">
@@ -51,20 +51,22 @@ export function Footer() {
                 {site.email}
               </a>
             </div>
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <p className="kicker">Hours</p>
               <ul className="mt-5 space-y-1.5 text-sm text-ivory/75">
                 {site.hours.map((h) => (
                   <li key={h.day} className="flex justify-between gap-4">
                     <span>{h.day.slice(0, 3)}</span>
-                    <span>{h.open ? `${h.open}–${h.close}` : "Closed"}</span>
+                    <span className="text-right">
+                      {h.open ? `${h.open}–${h.close}` : "Closed"}
+                    </span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
         </div>
-        <div className="mt-16 flex flex-col gap-3 border-t border-gold/20 pt-8 text-xs tracking-[0.16em] uppercase text-ivory/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-gold/20 pt-8 text-[11px] tracking-[0.12em] uppercase text-ivory/40 sm:mt-16 sm:flex-row sm:items-center sm:justify-between sm:text-xs sm:tracking-[0.16em]">
           <p>© {new Date().getFullYear()} {site.name}</p>
           <div className="flex gap-6">
             <a href={site.instagram} target="_blank" rel="noreferrer">

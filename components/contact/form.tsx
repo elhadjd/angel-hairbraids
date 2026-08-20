@@ -71,8 +71,7 @@ export function ContactForm({ services }: { services: Service[] }) {
     );
   }
 
-  const field =
-    "mt-2 w-full border-0 border-b border-gold/40 bg-transparent py-3 outline-none focus:border-gold";
+  const field = "field mt-2 appearance-none";
 
   return (
     <form onSubmit={onSubmit} className="grid gap-5">
@@ -110,7 +109,7 @@ export function ContactForm({ services }: { services: Service[] }) {
         <select
           value={form.subject}
           onChange={(e) => setForm({ ...form, subject: e.target.value })}
-          className={`${field} appearance-none`}
+          className={field}
         >
           {subjects.map((s) => (
             <option key={s} value={s}>
@@ -124,7 +123,7 @@ export function ContactForm({ services }: { services: Service[] }) {
         <select
           value={form.service}
           onChange={(e) => setForm({ ...form, service: e.target.value })}
-          className={`${field} appearance-none`}
+          className={field}
         >
           <option value="">Select a service</option>
           {services.map((s) => (
@@ -145,7 +144,7 @@ export function ContactForm({ services }: { services: Service[] }) {
       </label>
       {error ? <p className="text-sm text-clay">{error}</p> : null}
       <div className="pt-2">
-        <Button type="submit" disabled={status === "sending"}>
+        <Button type="submit" disabled={status === "sending"} className="w-full sm:w-auto">
           {status === "sending" ? "Sending…" : "Send Message"}
         </Button>
       </div>

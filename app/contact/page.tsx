@@ -62,9 +62,11 @@ export default async function ContactPage() {
             <p className="mt-8 kicker">Hours</p>
             <ul className="mt-4 divide-y divide-gold/25 border-y border-gold/25">
               {site.hours.map((h) => (
-                <li key={h.day} className="flex justify-between py-4 text-sm">
+                <li key={h.day} className="flex justify-between gap-3 py-4 text-sm">
                   <span>{h.day}</span>
-                  <span>{h.open ? `${h.open} – ${h.close}` : "Closed"}</span>
+                  <span className="shrink-0 text-right">
+                    {h.open ? `${h.open} – ${h.close}` : "Closed"}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -85,7 +87,7 @@ export default async function ContactPage() {
               </span>
             </a>
             <div className="mt-8">
-              <Button href="/book">Book Your Appointment</Button>
+              <Button href="/book" className="w-full sm:w-auto">Book Your Appointment</Button>
             </div>
           </div>
         </Container>

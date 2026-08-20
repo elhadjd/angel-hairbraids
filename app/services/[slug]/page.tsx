@@ -63,7 +63,7 @@ export default async function ServiceDetailPage({
           </div>
           <div className="flex flex-col justify-center lg:col-span-6">
             <p className="kicker">Service</p>
-            <h1 className="mt-4 font-display text-5xl sm:text-6xl">{service.name}</h1>
+            <h1 className="mt-4 font-display text-[2.4rem] leading-tight sm:text-6xl">{service.name}</h1>
             <p className="mt-2 text-gold">{service.tagline}</p>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-muted">
               {service.longDescription}
@@ -87,7 +87,9 @@ export default async function ServiceDetailPage({
               </div>
             </dl>
             <div className="mt-8">
-              <Button href={`/book?service=${service.slug}`}>Book Now</Button>
+              <Button href={`/book?service=${service.slug}`} className="w-full sm:w-auto">
+                Book Now
+              </Button>
             </div>
           </div>
         </Container>
@@ -118,7 +120,7 @@ export default async function ServiceDetailPage({
                     </p>
                     <Button
                       href={`/book?service=${service.slug}&style=${look.slug}`}
-                      className="mt-4"
+                      className="mt-4 w-full sm:w-auto"
                     >
                       Book This Style
                     </Button>

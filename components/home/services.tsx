@@ -81,14 +81,16 @@ export function ServicesShowcase({ services }: { services: Service[] }) {
                   {current.description}
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button href={`/book?service=${current.slug}`} className="w-full sm:w-auto">
+                  Book Now
+                </Button>
                 <Link
                   href={`/services/${current.slug}`}
                   className="text-[11px] tracking-[0.22em] uppercase text-ink underline"
                 >
                   Details
                 </Link>
-                <Button href={`/book?service=${current.slug}`}>Book Now</Button>
               </div>
             </div>
           </div>
