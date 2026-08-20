@@ -29,9 +29,9 @@ function weekdayOf(iso: string) {
 
 function upcomingOpenDays(count = 8) {
   const days: string[] = [];
-  let cursor = todayISO();
+  const start = todayISO();
   for (let i = 0; i < 21 && days.length < count; i++) {
-    const iso = addDaysISO(cursor, i);
+    const iso = addDaysISO(start, i);
     if (weekdayOf(iso) !== site.closedWeekday) days.push(iso);
   }
   return days;
@@ -58,8 +58,10 @@ export function BookingWizard() {
   const [styleId, setStyleId] = useState<string | null>(null);
   const [date, setDate] = useState<string | null>(null);
   const [time, setTime] = useState<string | null>(null);
-  const [slots, setSlots] = useState<string[]>([]);
-  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotResult, setSlotResult] = useState<{
+    key: string;
+    slots: string[];
+  } | null>(null);
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -105,13 +107,12 @@ export function BookingWizard() {
   const price = style?.priceFrom ?? service?.priceFrom ?? 0;
   const styleChoices = styles.filter((s) => !serviceId || s.serviceId === serviceId);
 
+  const slotKey =
+    date && serviceId ? `${date}:${serviceId}:${durationMin}` : "";
+
   useEffect(() => {
-    if (!date || !serviceId) {
-      setSlots([]);
-      return;
-    }
+    if (!slotKey || !date || !serviceId) return;
     let active = true;
-    setSlotsLoading(true);
     const query = new URLSearchParams({
       date,
       duration: String(durationMin),
@@ -122,16 +123,17 @@ export function BookingWizard() {
       .then((d) => {
         if (!active) return;
         const next = (d.slots ?? []) as string[];
-        setSlots(next);
+        setSlotResult({ key: slotKey, slots: next });
         setTime((current) => (current && next.includes(current) ? current : null));
-      })
-      .finally(() => {
-        if (active) setSlotsLoading(false);
       });
     return () => {
       active = false;
     };
-  }, [date, durationMin, serviceId]);
+  }, [slotKey, date, durationMin, serviceId]);
+
+  const slotsReady = Boolean(slotKey) && slotResult?.key === slotKey;
+  const visibleSlots = slotsReady ? slotResult.slots : [];
+  const slotsLoading = Boolean(slotKey) && !slotsReady;
 
   async function confirm(e: React.FormEvent) {
     e.preventDefault();
@@ -310,13 +312,13 @@ export function BookingWizard() {
             <p className="text-sm text-muted">Choose a day to see open times.</p>
           ) : slotsLoading ? (
             <p className="text-sm text-muted">Checking the chair…</p>
-          ) : slots.length === 0 ? (
+          ) : visibleSlots.length === 0 ? (
             <p className="text-sm text-muted">
               No openings on this day. Try another date — Mondays the atelier is closed.
             </p>
           ) : (
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {slots.map((slot) => (
+              {visibleSlots.map((slot) => (
                 <button
                   key={slot}
                   type="button"
