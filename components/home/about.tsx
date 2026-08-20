@@ -32,7 +32,7 @@ export function AboutPreview() {
             <p className="mt-6 text-base leading-relaxed text-muted">
               We are specialists in beauty, culture, and African style — a house
               of braiding founded on West African technique and a contemporary
-              Atlanta sensibility. Every part is a decision. Every hour is
+              Columbus sensibility. Every part is a decision. Every hour is
               unhurried.
             </p>
             <p className="mt-4 text-base leading-relaxed text-muted">

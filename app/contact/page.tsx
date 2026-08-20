@@ -6,7 +6,7 @@ import { FinalCta } from "@/components/home/final-cta";
 
 export const metadata: Metadata = {
   title: "Visit the Salon",
-  description: `Visit ${site.name} at ${formattedAddress}. Book African hair braiding in Atlanta.`,
+  description: `Visit ${site.name} at ${formattedAddress}. Book African hair braiding in Columbus, Ohio.`,
 };
 
 export default function ContactPage() {
@@ -63,7 +63,7 @@ export default function ContactPage() {
               <span>
                 <span className="kicker">Map</span>
                 <span className="mt-2 block font-display text-3xl">
-                  Peachtree Road, Atlanta
+                  Mock Rd, Columbus
                 </span>
                 <span className="mt-2 block text-sm text-ivory/60">
                   Open in Google Maps

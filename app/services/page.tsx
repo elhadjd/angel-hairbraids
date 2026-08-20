@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Braiding Services",
   description:
-    "Knotless braids, box braids, cornrows, Senegalese twists, Fulani, goddess braids, kids braids, wig installation, and natural hair care in Atlanta.",
+    "Knotless braids, box braids, cornrows, Senegalese twists, Fulani, goddess braids, kids braids, wig installation, and natural hair care in Columbus, Ohio.",
 };
 
 export default async function ServicesPage() {

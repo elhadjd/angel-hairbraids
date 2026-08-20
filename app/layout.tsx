@@ -21,7 +21,7 @@ const body = Outfit({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} | African Hair Braiding in Atlanta`,
+    default: `${site.name} | African Hair Braiding in Columbus, OH`,
     template: `%s | ${site.name}`,
   },
   description: site.description,

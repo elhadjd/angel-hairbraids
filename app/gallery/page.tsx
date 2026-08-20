@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Style Gallery",
   description:
-    "Browse knotless braids, box braids, cornrows, twists, kids braids, and special African styles from Angel African Hair Braiding in Atlanta.",
+    "Browse knotless braids, box braids, cornrows, twists, kids braids, and special African styles from Angel African Hair Braiding in Columbus, Ohio.",
 };
 
 export default async function GalleryPage() {

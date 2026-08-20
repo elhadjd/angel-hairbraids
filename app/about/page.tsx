@@ -9,7 +9,7 @@ import { warmBlur } from "@/lib/blur";
 export const metadata: Metadata = {
   title: "The Salon",
   description:
-    "The story of Angel African Hair Braiding — an Atlanta atelier devoted to African braiding, culture, and modern luxury.",
+    "The story of Angel African Hair Braiding — a Columbus, Ohio atelier devoted to African braiding, culture, and modern luxury.",
 };
 
 export default function AboutPage() {
@@ -28,7 +28,7 @@ export default function AboutPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/40 to-espresso/20" />
         <Container className="relative flex min-h-[70vh] flex-col justify-end pb-16 pt-32">
-          <p className="kicker">Est. 2014 · Atlanta</p>
+          <p className="kicker">Est. 2014 · Columbus</p>
           <h1 className="mt-5 max-w-4xl font-display text-5xl leading-[0.95] sm:text-7xl">
             A house of braiding, culture, and quiet luxury.
           </h1>
@@ -47,7 +47,7 @@ export default function AboutPage() {
             <p>
               Angel learned to braid in her grandmother’s courtyard in Accra —
               first on dolls, then on cousins, then on women who sat from dawn
-              until the light changed. When she opened the Atlanta atelier, she
+              until the light changed. When she opened the Columbus atelier, she
               refused the fluorescent, rushed model of braiding shops. She wanted
               a room that felt like a fitting at a fashion house.
             </p>

@@ -14,7 +14,7 @@ export function Footer() {
               African Hair Braiding
             </p>
             <p className="mt-6 max-w-sm text-sm leading-relaxed text-ivory/65">
-              A private Atlanta atelier for African braiding — where heritage
+              A private Columbus atelier for African braiding — where heritage
               technique meets contemporary luxury.
             </p>
           </div>

@@ -3,18 +3,18 @@ export const site = {
   shortName: "Angel",
   tagline: "Where African Beauty Meets Modern Style.",
   description:
-    "Atlanta’s luxury African hair braiding salon specializing in knotless braids, box braids, cornrows, twists, and premium natural hair care.",
+    "Columbus, Ohio’s luxury African hair braiding salon specializing in knotless braids, box braids, cornrows, twists, and premium natural hair care.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://angelafricanhairbraiding.com",
-  phone: "(404) 555-2847",
-  phoneHref: "tel:+14045552847",
-  email: "hello@angelafricanhairbraiding.com",
+  phone: "(614) 369-6788",
+  phoneHref: "tel:+16143696788",
+  email: "angelddie@yahoo.com",
   instagram: "https://instagram.com/angelafricanhairbraiding",
   instagramHandle: "@angelafricanhairbraiding",
   address: {
-    street: "1847 Peachtree Road NE, Suite 200",
-    city: "Atlanta",
-    state: "GA",
-    zip: "30309",
+    street: "2236 Mock Rd",
+    city: "Columbus",
+    state: "OH",
+    zip: "43219",
     country: "US",
   },
   hours: [
@@ -27,11 +27,13 @@ export const site = {
     { day: "Sunday", open: "11:00 AM", close: "5:00 PM" },
   ],
   closedWeekday: 1,
-  geo: { lat: 33.8053, lng: -84.3902 },
+  geo: { lat: 40.01206, lng: -82.9488 },
   founded: 2014,
 } as const;
 
 export const formattedAddress = `${site.address.street}, ${site.address.city}, ${site.address.state} ${site.address.zip}`;
+
+export const locationLabel = `${site.address.city}, ${site.address.state}`;
 
 export const keywords = [
   "African Hair Braiding",
@@ -39,10 +41,11 @@ export const keywords = [
   "Knotless Braids",
   "African Braids",
   "Braiding Salon Near Me",
-  "Box Braids Atlanta",
-  "Cornrows Atlanta",
+  "Box Braids Columbus Ohio",
+  "Cornrows Columbus",
   "Senegalese Twists",
   "Fulani Braids",
   "Goddess Braids",
-  "Kids Braids Atlanta",
+  "Kids Braids Columbus OH",
+  "African Hair Braiding Columbus",
 ];

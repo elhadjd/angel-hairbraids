@@ -26,7 +26,7 @@ export async function generateMetadata({
   if (!service) return { title: "Service" };
   return {
     title: service.name,
-    description: `${service.description} Book ${service.name} at ${site.name} in Atlanta. Starting at ${formatPrice(service.priceFrom)}.`,
+    description: `${service.description} Book ${service.name} at ${site.name} in Columbus, Ohio. Starting at ${formatPrice(service.priceFrom)}.`,
   };
 }
 

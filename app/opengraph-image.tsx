@@ -27,7 +27,7 @@ export default function OpenGraphImage() {
             textTransform: "uppercase",
           }}
         >
-          Atlanta · Est. 2014
+          Columbus, Ohio · Est. 2014
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", fontSize: 74, lineHeight: 1.05 }}>

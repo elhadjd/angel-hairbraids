@@ -314,7 +314,7 @@ export function seedStore(): StoreData {
         slug: "angel-mensah",
         name: "Angel Mensah",
         role: "Founder & Master Stylist",
-        bio: "Raised between Accra and Atlanta, Angel built the salon as a house of African craft and modern luxury. Two decades of braiding, one uncompromising standard.",
+        bio: "Raised between Accra and Columbus, Angel built the salon as a house of African craft and modern luxury. Two decades of braiding, one uncompromising standard.",
         image: "/images/stylist-angel.jpg",
         specialties: [
           "svc-knotless",
@@ -355,7 +355,7 @@ export function seedStore(): StoreData {
         slug: "amina-diallo",
         name: "Amina Diallo",
         role: "Twists & Fulani Artist",
-        bio: "From Dakar’s braiding houses to Atlanta’s fashion week, Amina brings ceremonial detail to twists, Fulani, and special-occasion silhouettes.",
+        bio: "From Dakar’s braiding houses to Columbus, Amina brings ceremonial detail to twists, Fulani, and special-occasion silhouettes.",
         image: "/images/stylist-amina.jpg",
         specialties: [
           "svc-twists",
@@ -546,7 +546,7 @@ export function seedStore(): StoreData {
         image: "/images/client-amara.jpg",
         rating: 5,
         quote:
-          "The cornrows are art. Precise, comfortable, and finished with a level of care I have not found anywhere else in Atlanta.",
+          "The cornrows are art. Precise, comfortable, and finished with a level of care I have not found anywhere else in Columbus.",
         service: "Designer Cornrows",
       },
       {

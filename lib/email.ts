@@ -89,7 +89,9 @@ export async function sendConfirmationEmail(input: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM ?? "Angel African Hair Braiding <hello@angelafricanhairbraiding.com>",
+        from:
+          process.env.EMAIL_FROM ??
+          `Angel African Hair Braiding <${site.email}>`,
         to: input.to,
         subject: input.subject,
         html: input.html,

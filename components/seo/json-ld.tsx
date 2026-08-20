@@ -33,7 +33,7 @@ export function JsonLd() {
         opens: to24(h.open as string),
         closes: to24(h.close as string),
       })),
-    areaServed: "Atlanta, Georgia",
+    areaServed: "Columbus, Ohio",
     slogan: site.tagline,
     hasMap: `https://maps.google.com/?q=${encodeURIComponent(formattedAddress)}`,
   };

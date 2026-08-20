@@ -9,7 +9,7 @@ export function Hero() {
       <div className="grid min-h-[100svh] lg:grid-cols-12">
         <div className="relative z-10 flex flex-col justify-end px-5 pb-16 pt-32 sm:px-8 sm:pb-20 lg:col-span-5 lg:justify-center lg:px-12 lg:pb-0 lg:pt-24">
           <p className="kicker animate-fade-up">
-            Atlanta · Est. {site.founded}
+            {site.address.city}, {site.address.state} · Est. {site.founded}
           </p>
           <h1 className="animate-fade-up delay-1 mt-6 font-display text-[3.15rem] leading-[0.92] sm:text-6xl lg:text-[4.4rem] xl:text-[5.1rem]">
             Where African
@@ -44,7 +44,7 @@ export function Hero() {
           <div className="absolute bottom-8 right-8 hidden max-w-[11rem] text-right text-[10px] leading-relaxed tracking-[0.22em] uppercase text-ivory/70 lg:block">
             Knotless & box braids
             <br />
-            Atlanta, Georgia
+            Columbus, Ohio
           </div>
         </div>
       </div>

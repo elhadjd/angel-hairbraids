@@ -36,7 +36,7 @@ export function FeaturedGallery({ items }: { items: GalleryItem[] }) {
           <SectionHeading
             kicker="The Atelier"
             title="Featured styles, composed like portraits."
-            copy="A living archive of knotless, box braids, cornrows, twists, and ceremonial looks created in our Atlanta studio."
+            copy="A living archive of knotless, box braids, cornrows, twists, and ceremonial looks created in our Columbus studio."
           />
         </Reveal>
 

@@ -1,6 +1,6 @@
 # Angel African Hair Braiding
 
-A luxury African hair braiding salon website for Atlanta — designed for conversion, with a full booking flow, client portal, and atelier admin desk.
+A luxury African hair braiding salon website for Columbus, Ohio — designed for conversion, with a full booking flow, client portal, and atelier admin desk.
 
 ## Stack
 
