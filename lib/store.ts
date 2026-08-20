@@ -32,6 +32,7 @@ async function load(): Promise<StoreData> {
       appointments: parsed.appointments ?? seed.appointments,
       customers: parsed.customers ?? seed.customers,
       emails: parsed.emails ?? [],
+      inquiries: parsed.inquiries ?? [],
     };
   } catch {
     const seed = seedStore();

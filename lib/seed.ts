@@ -737,5 +737,6 @@ export function seedStore(): StoreData {
       },
     ],
     emails: [],
+    inquiries: [],
   };
 }

@@ -119,6 +119,18 @@ export type EmailLog = {
   createdAt: string;
 };
 
+export type Inquiry = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  service: string;
+  createdAt: string;
+  provider: "sisgesc" | "local";
+};
+
 export type StoreData = {
   services: Service[];
   styles: StyleLook[];
@@ -128,6 +140,7 @@ export type StoreData = {
   appointments: Appointment[];
   customers: Customer[];
   emails: EmailLog[];
+  inquiries: Inquiry[];
 };
 
 export type BookingPayload = {
