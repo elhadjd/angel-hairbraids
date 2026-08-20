@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Angel African Hair Braiding
 
-## Getting Started
+A luxury African hair braiding salon website for Atlanta — designed for conversion, with a full booking flow, client portal, and atelier admin desk.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- TypeScript
+- File-based data store (`data/salon.json`)
+
+## Develop
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Booking & email
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Appointments are saved to `data/salon.json`. Confirmation emails are written to `data/emails/`. To send live mail, set `RESEND_API_KEY` and `EMAIL_FROM`.
 
-## Learn More
+Deposits are modeled on every appointment (`unpaid` / `paid` / `waived`) so Stripe (or another processor) can be attached later without changing the booking contract.
 
-To learn more about Next.js, take a look at the following resources:
+## Admin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Visit `/admin` and sign in with the password in `ADMIN_PASSWORD` (demo: `angel2026`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Client portal
 
-## Deploy on Vercel
+`/account` — look up visits with the booking email and phone.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Sample client: `maya.johnson@email.com` · `(404) 555-0192`
