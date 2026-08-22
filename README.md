@@ -20,14 +20,18 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## SISGESC
 
-Set in `.env`:
+Set in `.env` or `.env.local` (restart `next dev` after changing it):
 
 ```
-SITE_API_HOST=https://your-sisgesc-host
-SITE_API_KEY=your-site-api-key
+SITE_API_HOST=http://localhost:8080
+SITE_API_KEY="your-site-api-key"
 ```
 
-The key is added only on the server (`key` header). It is never sent to the browser.
+`SITE_API_HOST` is the ERP origin only. Do **not** add `/api/site` — the app already calls `/api/site/media`, `/api/site/products`, `/api/site/appointments/submit`, and so on. Quote the key if it contains `+`, `/`, or `=`.
+
+The key is added only on the server (`key` header and query). It is never sent to the browser.
+
+If SISGESC rejects or cannot be reached, booking and contact show an error. They do not show success.
 
 | Need | Route |
 |------|--------|
@@ -39,7 +43,7 @@ The key is added only on the server (`key` header). It is never sent to the brow
 | Confirm deposit | `POST /api/site/appointments/confirm-payment` |
 | Contact | `POST /api/site/contacts/submit` |
 
-If the API is not configured, the site falls back to local seed content so development still works. Appointments and contacts are still stored locally as a backup.
+If the API is not configured, the site falls back to local seed content so development still works. When the API is configured, a successful booking is also stored locally as a backup. Open `/api/catalog` to see which SISGESC endpoints answered.
 
 Booking does not send `department_id`. SISGESC uses the first company department that has appointment configuration.
 

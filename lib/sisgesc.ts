@@ -30,12 +30,28 @@ export type AppointmentPayload = {
   origin: string;
 };
 
+function stripEnvQuotes(value: string) {
+  return value.trim().replace(/^['"]+|['"]+$/g, "");
+}
+
+/** Origin only. `http://localhost:8080/api/site` is accepted and reduced to `http://localhost:8080`. */
+export function resolveSiteApiHost(raw = process.env.SITE_API_HOST ?? "") {
+  let host = stripEnvQuotes(raw);
+  host = host.replace(/\/+$/, "");
+  host = host.replace(/\/api\/site$/i, "");
+  host = host.replace(/\/+$/, "");
+  if (/^https?:\/\/localhost\b/i.test(host)) {
+    host = host.replace(/localhost/i, "127.0.0.1");
+  }
+  return host;
+}
+
 function apiHost() {
-  return (process.env.SITE_API_HOST ?? "").replace(/\/$/, "");
+  return resolveSiteApiHost();
 }
 
 function apiKey() {
-  return process.env.SITE_API_KEY ?? "";
+  return stripEnvQuotes(process.env.SITE_API_KEY ?? "");
 }
 
 export function isSiteApiConfigured() {
@@ -55,6 +71,40 @@ function missingConfig(): SiteApiResult {
   };
 }
 
+function asData(parsed: unknown): Record<string, unknown> {
+  if (Array.isArray(parsed)) return { data: parsed };
+  if (parsed && typeof parsed === "object") return parsed as Record<string, unknown>;
+  return {};
+}
+
+function siteUrl(path: string, query: Record<string, string | number | boolean | undefined> = {}) {
+  const host = apiHost();
+  const key = apiKey();
+  const url = new URL(`${host}${path.startsWith("/") ? path : `/${path}`}`);
+  url.searchParams.set("key", key);
+  for (const [name, value] of Object.entries(query)) {
+    if (value === undefined || value === "") continue;
+    url.searchParams.set(name, String(value));
+  }
+  return url.toString();
+}
+
+export function siteApiMessage(data: Record<string, unknown>, fallback: string) {
+  if (typeof data.message === "string" && data.message.trim()) return data.message;
+  if (typeof data.error === "string" && data.error.trim()) return data.error;
+  const errors = data.errors;
+  if (errors && typeof errors === "object") {
+    const first = Object.values(errors as Record<string, unknown>)[0];
+    if (Array.isArray(first) && first[0]) return String(first[0]);
+    if (typeof first === "string" && first.trim()) return first;
+  }
+  return fallback;
+}
+
+async function readBody(res: Response) {
+  return asData(await res.json().catch(() => ({})));
+}
+
 export async function siteApiGet(
   path: string,
   query: Record<string, string | number | boolean | undefined> = {},
@@ -63,18 +113,23 @@ export async function siteApiGet(
   const key = apiKey();
   if (!host || !key) return missingConfig();
 
-  const params = new URLSearchParams();
-  for (const [name, value] of Object.entries(query)) {
-    if (value === undefined || value === "") continue;
-    params.set(name, String(value));
+  try {
+    const res = await fetch(siteUrl(path, query), {
+      headers: { Accept: "application/json", key },
+      cache: "no-store",
+    });
+    const data = await readBody(res);
+    return { ok: res.ok, status: res.status, data };
+  } catch (error) {
+    console.error("SISGESC GET failed", path, error);
+    return {
+      ok: false,
+      status: 503,
+      data: {
+        message: `Could not reach SISGESC at ${host}. Check SITE_API_HOST and that the ERP is running.`,
+      },
+    };
   }
-  const qs = params.toString();
-  const res = await fetch(`${host}${path}${qs ? `?${qs}` : ""}`, {
-    headers: { Accept: "application/json", key },
-    next: { revalidate: 60 },
-  });
-  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  return { ok: res.ok, status: res.status, data };
 }
 
 async function siteApiPost(
@@ -85,18 +140,30 @@ async function siteApiPost(
   const key = apiKey();
   if (!host || !key) return missingConfig();
 
-  const res = await fetch(`${host}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      key,
-    },
-    body: JSON.stringify(body),
-  });
+  try {
+    const res = await fetch(siteUrl(path), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        key,
+      },
+      cache: "no-store",
+      body: JSON.stringify(body),
+    });
 
-  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-  return { ok: res.status === 201 || res.ok, status: res.status, data };
+    const data = await readBody(res);
+    return { ok: res.status === 201 || res.ok, status: res.status, data };
+  } catch (error) {
+    console.error("SISGESC POST failed", path, error);
+    return {
+      ok: false,
+      status: 503,
+      data: {
+        message: `Could not reach SISGESC at ${host}. Check SITE_API_HOST and that the ERP is running.`,
+      },
+    };
+  }
 }
 
 export function unwrapList(payload: unknown): Record<string, unknown>[] {

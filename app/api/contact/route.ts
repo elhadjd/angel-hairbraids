@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { createId, updateStore } from "@/lib/store";
-import { isSiteApiConfigured, submitSiteContact } from "@/lib/sisgesc";
+import { isSiteApiConfigured, siteApiMessage, submitSiteContact } from "@/lib/sisgesc";
 import { site } from "@/lib/site";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -35,31 +35,32 @@ export async function POST(request: NextRequest) {
   let remoteContact: unknown = null;
 
   if (isSiteApiConfigured()) {
-    try {
-      const result = await submitSiteContact({
-        name,
-        email,
-        phone,
-        subject: subject || undefined,
-        message: message || undefined,
-        service: service || undefined,
-        serviceType,
-        pageUrl,
-      });
+    const result = await submitSiteContact({
+      name,
+      email,
+      phone,
+      subject: subject || undefined,
+      message: message || undefined,
+      service: service || undefined,
+      serviceType,
+      pageUrl,
+    });
 
-      if (result.status === 422) {
-        return Response.json(result.data, { status: 422 });
-      }
-
-      if (result.status === 201 || result.ok) {
-        provider = "sisgesc";
-        remoteContact = result.data.contact ?? result.data;
-      } else {
-        console.error("SISGESC contact error", result.status, result.data);
-      }
-    } catch (error) {
-      console.error("SISGESC contact request failed", error);
+    if (!result.ok) {
+      const message = siteApiMessage(
+        result.data,
+        "Your message could not be sent. Please try again or call us.",
+      );
+      console.error("SISGESC contact rejected", result.status, result.data);
+      return Response.json(
+        { message, errors: result.data.errors, success: false },
+        { status: result.status === 422 || result.status === 403 ? result.status : 502 },
+      );
     }
+
+    provider = "sisgesc";
+    const payload = (result.data.data ?? result.data) as Record<string, unknown>;
+    remoteContact = payload.contact ?? result.data.contact ?? result.data;
   }
 
   await updateStore((current) => ({

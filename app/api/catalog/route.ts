@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   return Response.json({
     source: catalog.source,
     currency: catalog.currency,
+    diagnostics: catalog.diagnostics,
     services: catalog.services,
     styles: service
       ? catalog.styles.filter(

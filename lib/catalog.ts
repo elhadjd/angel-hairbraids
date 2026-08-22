@@ -6,6 +6,7 @@ import {
   fetchSiteProducts,
   isSiteApiConfigured,
   quoteProductPrice,
+  resolveSiteApiHost,
   unwrapList,
 } from "./sisgesc";
 import { readStore } from "./store";
@@ -14,6 +15,7 @@ import type {
   CatalogPriceItem,
   GalleryItem,
   Service,
+  SiteApiProbe,
   SiteCatalog,
   SiteMediaAsset,
   StyleLook,
@@ -96,7 +98,9 @@ function flattenMedia(payload: unknown): SiteMediaAsset[] {
   const assets: SiteMediaAsset[] = [];
 
   for (const row of rows) {
-    const nestedAssets = unwrapList(row.media_assets);
+    const nestedAssets = unwrapList(
+      row.media_assets ?? row.assets ?? row.media,
+    );
     const group = asRecord(row.group);
     if (nestedAssets.length) {
       for (const asset of nestedAssets) {
@@ -282,7 +286,11 @@ function galleryFromServices(services: Service[]): GalleryItem[] {
     }));
 }
 
-function localCatalog(): SiteCatalog {
+function probe(ok: boolean, status: number, count: number): SiteApiProbe {
+  return { ok, status, count };
+}
+
+function localCatalog(diagnostics?: SiteCatalog["diagnostics"]): SiteCatalog {
   const seed = seedStore();
   return {
     source: "local",
@@ -302,31 +310,72 @@ function localCatalog(): SiteCatalog {
       all: [],
     },
     currency: "USD",
+    diagnostics,
   };
 }
 
 export async function getSiteCatalog(): Promise<SiteCatalog> {
-  if (!isSiteApiConfigured()) return localCatalog();
+  if (!isSiteApiConfigured()) {
+    return localCatalog({
+      configured: false,
+      host: "",
+      media: probe(false, 0, 0),
+      products: probe(false, 0, 0),
+      catalogPrices: probe(false, 0, 0),
+      priceLists: probe(false, 0, 0),
+    });
+  }
 
   try {
-    const [mediaRes, productsRes, catalogPricesRes, erpPricesRes] = await Promise.all([
-      fetchSiteMedia({ grouped: 1 }),
-      fetchSiteProducts(),
-      fetchCatalogPriceLists(),
-      fetchErpPriceLists(),
-    ]);
+    const [groupedMedia, productsRes, catalogPricesRes, erpPricesRes] =
+      await Promise.all([
+        fetchSiteMedia({ grouped: 1 }),
+        fetchSiteProducts(),
+        fetchCatalogPriceLists(),
+        fetchErpPriceLists(),
+      ]);
 
-    const media = flattenMedia(mediaRes.ok ? mediaRes.data : []);
+    let media = flattenMedia(groupedMedia.ok ? groupedMedia.data : []);
+    let mediaRes = groupedMedia;
+    if (!media.length) {
+      const flatMedia = await fetchSiteMedia();
+      mediaRes = flatMedia;
+      media = flattenMedia(flatMedia.ok ? flatMedia.data : []);
+    }
+
     const products = unwrapList(productsRes.ok ? productsRes.data : []);
     const services = products.map(mapProduct);
     const styles = products.flatMap((product, index) =>
       mapProductStyles(product, services[index]),
     );
-    const priceTables = mapPriceTables(catalogPricesRes.ok ? catalogPricesRes.data : []);
+    const priceTables = mapPriceTables(
+      catalogPricesRes.ok ? catalogPricesRes.data : [],
+    );
     const erpLists = unwrapList(erpPricesRes.ok ? erpPricesRes.data : []);
     const currency =
       asString(erpLists[0]?.currency, services.find((s) => s.currency)?.currency) ||
       "USD";
+
+    const diagnostics = {
+      configured: true,
+      host: resolveSiteApiHost(),
+      media: probe(mediaRes.ok, mediaRes.status, media.length),
+      products: probe(productsRes.ok, productsRes.status, products.length),
+      catalogPrices: probe(
+        catalogPricesRes.ok,
+        catalogPricesRes.status,
+        priceTables.length,
+      ),
+      priceLists: probe(erpPricesRes.ok, erpPricesRes.status, erpLists.length),
+    };
+
+    const reachedApi =
+      mediaRes.ok || productsRes.ok || catalogPricesRes.ok || erpPricesRes.ok;
+
+    if (!reachedApi) {
+      console.error("SISGESC catalog unreachable", diagnostics);
+      return localCatalog(diagnostics);
+    }
 
     const galleryMedia = byPlacement(media, "gallery", "portfolio", "look");
     const gallery = [
@@ -336,10 +385,6 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
       (item, index, list) =>
         item.image && list.findIndex((other) => other.image === item.image) === index,
     );
-
-    if (!media.length && !services.length && !priceTables.length) {
-      return localCatalog();
-    }
 
     const seed = seedStore();
     return {
@@ -360,10 +405,18 @@ export async function getSiteCatalog(): Promise<SiteCatalog> {
         all: media,
       },
       currency,
+      diagnostics,
     };
   } catch (error) {
     console.error("SISGESC catalog load failed", error);
-    return localCatalog();
+    return localCatalog({
+      configured: true,
+      host: resolveSiteApiHost(),
+      media: probe(false, 503, 0),
+      products: probe(false, 503, 0),
+      catalogPrices: probe(false, 503, 0),
+      priceLists: probe(false, 503, 0),
+    });
   }
 }
 

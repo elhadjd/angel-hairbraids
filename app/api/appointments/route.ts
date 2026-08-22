@@ -5,6 +5,7 @@ import { assignStylist, getAvailableSlots, getHoursSlots } from "@/lib/availabil
 import { getSiteCatalog } from "@/lib/catalog";
 import {
   isSiteApiConfigured,
+  siteApiMessage,
   siteDepositAmount,
   splitPersonName,
   submitSiteAppointment,
@@ -126,47 +127,49 @@ export async function POST(request: NextRequest) {
   let remoteMessage = "";
 
   if (isSiteApiConfigured()) {
-    try {
-      const result = await submitSiteAppointment({
-        firstName,
-        lastName,
-        email: body.customerEmail.trim().toLowerCase(),
-        phone: body.customerPhone.trim().slice(0, 20),
-        date: body.date,
-        time: body.time.length === 5 ? body.time : body.time.slice(0, 5),
-        service: service.productId ?? service.name,
-        notes: (body.notes ?? "").trim() || undefined,
-        metadata: {
-          style: style?.name,
-          stylist: stylist.name,
-          duration_min: durationMin,
-        },
-        origin,
-      });
+    const result = await submitSiteAppointment({
+      firstName,
+      lastName,
+      email: body.customerEmail.trim().toLowerCase(),
+      phone: body.customerPhone.trim().slice(0, 20),
+      date: body.date,
+      time: body.time.length === 5 ? body.time : body.time.slice(0, 5),
+      service: service.productId ?? service.name,
+      notes: (body.notes ?? "").trim() || undefined,
+      metadata: {
+        style: style?.name,
+        stylist: stylist.name,
+        duration_min: durationMin,
+      },
+      origin,
+    });
 
-      if (result.status === 422) {
-        const message =
-          (result.data.message as string) ||
-          "Please check your booking details.";
-        return Response.json({ error: message, details: result.data }, { status: 422 });
-      }
-
-      if (result.status === 403) {
-        return Response.json({ error: "Unauthorized" }, { status: 403 });
-      }
-
-      if (result.status === 201 || result.ok) {
-        provider = "sisgesc";
-        const apt = (result.data.appointment ?? {}) as Record<string, unknown>;
-        if (apt.id != null) externalId = String(apt.id);
-        payment = (result.data.payment as Record<string, unknown>) ?? null;
-        remoteMessage = String(result.data.message ?? "");
-      } else {
-        console.error("SISGESC appointment error", result.status, result.data);
-      }
-    } catch (error) {
-      console.error("SISGESC appointment request failed", error);
+    if (!result.ok) {
+      const message = siteApiMessage(
+        result.data,
+        result.status === 503
+          ? "The salon booking system is unavailable. Please try again or call us."
+          : "Your appointment could not be reserved. Please try again.",
+      );
+      console.error("SISGESC appointment rejected", result.status, result.data);
+      return Response.json(
+        { error: message, details: result.data, success: false },
+        { status: result.status === 422 || result.status === 403 ? result.status : 502 },
+      );
     }
+
+    provider = "sisgesc";
+    const payload = (result.data.data ?? result.data) as Record<string, unknown>;
+    const apt = (payload.appointment ?? result.data.appointment ?? {}) as Record<
+      string,
+      unknown
+    >;
+    if (apt.id != null) externalId = String(apt.id);
+    payment =
+      (payload.payment as Record<string, unknown>) ??
+      (result.data.payment as Record<string, unknown>) ??
+      null;
+    remoteMessage = siteApiMessage(result.data, "Appointment created successfully.");
   }
 
   const appointment: Appointment = {

@@ -101,6 +101,12 @@ export type CatalogPriceGroup = {
   items: CatalogPriceItem[];
 };
 
+export type SiteApiProbe = {
+  ok: boolean;
+  status: number;
+  count: number;
+};
+
 export type SiteCatalog = {
   source: "sisgesc" | "local";
   services: Service[];
@@ -119,6 +125,14 @@ export type SiteCatalog = {
     all: SiteMediaAsset[];
   };
   currency: string;
+  diagnostics?: {
+    configured: boolean;
+    host: string;
+    media: SiteApiProbe;
+    products: SiteApiProbe;
+    catalogPrices: SiteApiProbe;
+    priceLists: SiteApiProbe;
+  };
 };
 
 export type Testimonial = {
