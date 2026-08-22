@@ -7,13 +7,7 @@ export type AppointmentStatus =
 
 export type DepositStatus = "unpaid" | "paid" | "waived";
 
-export type GalleryCategory =
-  | "braids"
-  | "knotless"
-  | "twists"
-  | "cornrows"
-  | "kids"
-  | "special";
+export type GalleryCategory = string;
 
 export type Service = {
   id: string;
@@ -28,6 +22,9 @@ export type Service = {
   image: string;
   featured: boolean;
   category: GalleryCategory;
+  productId?: number;
+  currency?: string;
+  priceLabel?: string;
 };
 
 export type StyleLook = {
@@ -67,6 +64,61 @@ export type GalleryItem = {
   serviceId: string;
   durationLabel: string;
   priceFrom: number;
+  type?: "image" | "video";
+  buttonLabel?: string | null;
+  buttonUrl?: string | null;
+};
+
+export type SiteMediaAsset = {
+  id: number | string;
+  type: string;
+  title: string;
+  description: string;
+  mediaUrl: string;
+  thumbnailUrl: string;
+  placement: string;
+  groupName: string;
+  buttonLabel: string;
+  buttonUrl: string;
+  featured: boolean;
+  sortOrder: number;
+};
+
+export type CatalogPriceItem = {
+  id: string;
+  title: string;
+  description: string;
+  price: number | null;
+  priceLabel: string;
+  badge: string;
+  highlighted: boolean;
+};
+
+export type CatalogPriceGroup = {
+  id: string;
+  title: string;
+  description: string;
+  items: CatalogPriceItem[];
+};
+
+export type SiteCatalog = {
+  source: "sisgesc" | "local";
+  services: Service[];
+  styles: StyleLook[];
+  stylists: Stylist[];
+  gallery: GalleryItem[];
+  testimonials: Testimonial[];
+  priceTables: CatalogPriceGroup[];
+  media: {
+    home: SiteMediaAsset[];
+    gallery: SiteMediaAsset[];
+    about: SiteMediaAsset[];
+    product: SiteMediaAsset[];
+    instagram: SiteMediaAsset[];
+    featured: SiteMediaAsset[];
+    all: SiteMediaAsset[];
+  };
+  currency: string;
 };
 
 export type Testimonial = {

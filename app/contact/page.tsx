@@ -4,7 +4,7 @@ import { Button, Container, SectionHeading } from "@/components/ui/button";
 import { formattedAddress, site } from "@/lib/site";
 import { FinalCta } from "@/components/home/final-cta";
 import { ContactForm } from "@/components/contact/form";
-import { readStore } from "@/lib/store";
+import { getSiteCatalog } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const { services } = await readStore();
+  const { services } = await getSiteCatalog();
 
   return (
     <SiteShell>

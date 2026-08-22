@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SiteShell } from "@/components/layout/site-shell";
 import { Container, SectionHeading } from "@/components/ui/button";
 import { GalleryGrid } from "@/components/gallery/gallery-grid";
-import { readStore } from "@/lib/store";
+import { getSiteCatalog } from "@/lib/catalog";
 import { FinalCta } from "@/components/home/final-cta";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  const { gallery } = await readStore();
+  const { gallery } = await getSiteCatalog();
   return (
     <SiteShell>
       <section className="bg-ivory pt-32 pb-20">

@@ -1,23 +1,21 @@
-import Image from "next/image";
 import { Button, Container } from "@/components/ui/button";
+import { Media } from "@/components/ui/media";
 import { Reveal } from "@/components/ui/reveal";
-import { warmBlur } from "@/lib/blur";
+import type { SiteMediaAsset } from "@/lib/types";
 
-export function AboutPreview() {
+export function AboutPreview({ media }: { media?: SiteMediaAsset | null }) {
+  const image = media?.mediaUrl || "/images/about-craft.jpg";
   return (
     <section className="bg-ivory py-24 lg:py-32">
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
           <Reveal className="relative lg:col-span-7">
             <div className="relative aspect-[4/3] overflow-hidden">
-              <Image
-                src="/images/about-craft.jpg"
-                alt="Stylist braiding a client in the Angel atelier"
-                fill
-                placeholder="blur"
-                blurDataURL={warmBlur}
+              <Media
+                src={image}
+                alt={media?.title || "Stylist braiding a client in the Angel atelier"}
+                type={media?.type}
                 sizes="(max-width: 1024px) 100vw, 58vw"
-                className="object-cover"
               />
             </div>
             <p className="absolute -bottom-6 right-6 hidden max-w-[180px] bg-espresso px-5 py-4 font-display text-xl italic text-gold lg:block">

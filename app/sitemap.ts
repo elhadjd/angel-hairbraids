@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/lib/site";
-import { seedStore } from "@/lib/seed";
+import { getSiteCatalog } from "@/lib/catalog";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const services = seedStore().services;
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { services } = await getSiteCatalog();
   const now = new Date();
   const staticRoutes = [
     "",

@@ -1,17 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import type { Service } from "@/lib/types";
-import { formatDuration, formatPrice } from "@/lib/format";
+import { formatDuration, formatListedPrice } from "@/lib/format";
 import { Button, Container, SectionHeading } from "@/components/ui/button";
+import { Media } from "@/components/ui/media";
 import { Reveal } from "@/components/ui/reveal";
-import { warmBlur } from "@/lib/blur";
 
-export function ServicesShowcase({ services }: { services: Service[] }) {
+export function ServicesShowcase({
+  services,
+  currency = "USD",
+}: {
+  services: Service[];
+  currency?: string;
+}) {
   const [active, setActive] = useState(services[0]?.id);
   const current = services.find((s) => s.id === active) ?? services[0];
+  if (!current) return null;
 
   return (
     <section className="bg-ivory py-24 lg:py-32">
@@ -52,7 +58,7 @@ export function ServicesShowcase({ services }: { services: Service[] }) {
                         {s.name}
                       </span>
                       <span className="mt-1 hidden text-sm text-muted sm:block">
-                        from {formatPrice(s.priceFrom)} · {formatDuration(s.durationMin, s.durationMax)}
+                        from {formatListedPrice(s.priceFrom, s.currency || currency, s.priceLabel)} · {formatDuration(s.durationMin, s.durationMax)}
                       </span>
                     </span>
                   </button>
@@ -63,15 +69,11 @@ export function ServicesShowcase({ services }: { services: Service[] }) {
 
           <div className="lg:col-span-6">
             <div className="img-zoom relative aspect-[4/5] overflow-hidden bg-paper">
-              <Image
+              <Media
                 key={current.id}
                 src={current.image}
                 alt={current.name}
-                fill
-                placeholder="blur"
-                blurDataURL={warmBlur}
                 sizes="(max-width: 1024px) 100vw, 42vw"
-                className="object-cover"
               />
             </div>
             <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">

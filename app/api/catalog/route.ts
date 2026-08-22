@@ -1,20 +1,23 @@
 import { NextRequest } from "next/server";
+import { getSiteCatalog } from "@/lib/catalog";
 import { siteDepositAmount } from "@/lib/sisgesc";
-import { readStore } from "@/lib/store";
 
 export async function GET(request: NextRequest) {
-  const store = await readStore();
+  const catalog = await getSiteCatalog();
   const { searchParams } = request.nextUrl;
   const service = searchParams.get("service");
 
   return Response.json({
-    services: store.services,
+    source: catalog.source,
+    currency: catalog.currency,
+    services: catalog.services,
     styles: service
-      ? store.styles.filter(
+      ? catalog.styles.filter(
           (s) => s.serviceId === service || s.slug === service,
         )
-      : store.styles,
-    stylists: store.stylists,
+      : catalog.styles,
+    stylists: catalog.stylists,
+    priceTables: catalog.priceTables,
     depositAmount: siteDepositAmount(),
   });
 }

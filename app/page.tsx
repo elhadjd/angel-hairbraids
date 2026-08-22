@@ -8,23 +8,46 @@ import { WhyUs } from "@/components/home/why";
 import { Testimonials } from "@/components/home/testimonials";
 import { Instagram } from "@/components/home/instagram";
 import { FinalCta } from "@/components/home/final-cta";
-import { readStore } from "@/lib/store";
+import { PriceTables } from "@/components/catalog/price-tables";
+import { getSiteCatalog } from "@/lib/catalog";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const store = await readStore();
+  const catalog = await getSiteCatalog();
+  const hero =
+    catalog.media.home.find((item) => item.featured) ??
+    catalog.media.featured[0] ??
+    catalog.media.home[0] ??
+    null;
+  const about = catalog.media.about[0] ?? null;
+  const instagram = (
+    catalog.media.instagram.length
+      ? catalog.media.instagram
+      : catalog.media.featured.length
+        ? catalog.media.featured
+        : catalog.gallery
+  )
+    .map((item) => ("mediaUrl" in item ? item.mediaUrl || item.thumbnailUrl : item.image))
+    .filter(Boolean);
 
   return (
     <SiteShell invertedHeader>
-      <Hero />
+      <Hero media={hero} />
       <Trust />
-      <ServicesShowcase services={store.services} />
-      <FeaturedGallery items={store.gallery} />
-      <AboutPreview />
+      {catalog.services.length ? (
+        <ServicesShowcase services={catalog.services} currency={catalog.currency} />
+      ) : null}
+      {catalog.gallery.length ? <FeaturedGallery items={catalog.gallery} /> : null}
+      <AboutPreview media={about} />
       <WhyUs />
-      <Testimonials items={store.testimonials} />
-      <Instagram />
+      {catalog.priceTables.length ? (
+        <PriceTables tables={catalog.priceTables} currency={catalog.currency} />
+      ) : null}
+      {catalog.testimonials.length ? (
+        <Testimonials items={catalog.testimonials} />
+      ) : null}
+      <Instagram images={instagram} />
       <FinalCta />
     </SiteShell>
   );

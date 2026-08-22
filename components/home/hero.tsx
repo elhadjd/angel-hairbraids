@@ -1,9 +1,17 @@
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Media } from "@/components/ui/media";
 import { site } from "@/lib/site";
-import { warmBlur } from "@/lib/blur";
+import type { SiteMediaAsset } from "@/lib/types";
 
-export function Hero() {
+export function Hero({ media }: { media?: SiteMediaAsset | null }) {
+  const image = media?.mediaUrl || "/images/hero-portrait.jpg";
+  const caption = media?.title || "Knotless & box braids";
+  const copy =
+    media?.description ||
+    "A private atelier specializing in knotless braids, box braids, cornrows, and ceremonial African styles — crafted with patience, precision, and reverence for the hair.";
+  const ctaHref = media?.buttonUrl || "/book";
+  const ctaLabel = media?.buttonLabel || "Book Your Appointment";
+
   return (
     <section className="relative min-h-[100svh] bg-espresso text-ivory">
       <div className="grid min-h-[100svh] lg:grid-cols-12">
@@ -17,13 +25,11 @@ export function Hero() {
             Meets Modern Style.
           </h1>
           <p className="animate-fade-up delay-2 mt-5 max-w-md text-sm leading-relaxed text-ivory/70 sm:mt-6 sm:text-lg">
-            A private atelier specializing in knotless braids, box braids,
-            cornrows, and ceremonial African styles — crafted with patience,
-            precision, and reverence for the hair.
+            {copy}
           </p>
           <div className="animate-fade-up delay-3 mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
-            <Button href="/book" className="w-full sm:w-auto">
-              Book Your Appointment
+            <Button href={ctaHref} className="w-full sm:w-auto">
+              {ctaLabel}
             </Button>
             <Button href="/gallery" variant="ghost" className="w-full sm:w-auto">
               Explore Our Styles
@@ -32,19 +38,17 @@ export function Hero() {
         </div>
 
         <div className="relative min-h-[48vh] sm:min-h-[62vh] lg:col-span-7 lg:min-h-[100svh]">
-          <Image
-            src="/images/hero-portrait.jpg"
-            alt="Editorial portrait of a woman with honey-brown African box braids"
-            fill
+          <Media
+            src={image}
+            alt={caption || "Editorial portrait from Angel African Hair Braiding"}
+            type={media?.type}
             preload
-            placeholder="blur"
-            blurDataURL={warmBlur}
             sizes="(max-width: 1024px) 100vw, 58vw"
             className="animate-fade-in object-cover object-[center_20%]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/20 to-transparent lg:bg-gradient-to-r lg:from-espresso lg:via-espresso/10 lg:to-transparent" />
           <div className="absolute bottom-8 right-8 hidden max-w-[11rem] text-right text-[10px] leading-relaxed tracking-[0.22em] uppercase text-ivory/70 lg:block">
-            Knotless & box braids
+            {caption}
             <br />
             Columbus, Ohio
           </div>

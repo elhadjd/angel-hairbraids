@@ -1,10 +1,9 @@
-import Image from "next/image";
 import { site } from "@/lib/site";
 import { Button, Container } from "@/components/ui/button";
+import { Media } from "@/components/ui/media";
 import { Reveal } from "@/components/ui/reveal";
-import { warmBlur } from "@/lib/blur";
 
-const shots = [
+const fallback = [
   "/images/gallery-01.jpg",
   "/images/gallery-02.jpg",
   "/images/gallery-03.jpg",
@@ -13,7 +12,9 @@ const shots = [
   "/images/gallery-08.jpg",
 ];
 
-export function Instagram() {
+export function Instagram({ images = [] }: { images?: string[] }) {
+  const shots = (images.length ? images : fallback).slice(0, 6);
+
   return (
     <section className="bg-paper py-24">
       <Container>
@@ -33,20 +34,16 @@ export function Instagram() {
         <div className="mt-12 grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-6">
           {shots.map((src, i) => (
             <a
-              key={src}
+              key={`${src}-${i}`}
               href={site.instagram}
               target="_blank"
               rel="noreferrer"
               className="img-zoom relative aspect-square overflow-hidden"
             >
-              <Image
+              <Media
                 src={src}
                 alt={`Latest style ${i + 1} from Angel African Hair Braiding`}
-                fill
-                placeholder="blur"
-                blurDataURL={warmBlur}
                 sizes="(max-width: 768px) 50vw, 16vw"
-                className="object-cover"
               />
             </a>
           ))}

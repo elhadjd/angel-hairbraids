@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { createId, createReference, readStore, updateStore } from "@/lib/store";
 import { confirmationHtml, sendConfirmationEmail } from "@/lib/email";
-import { assignStylist, getAvailableSlots } from "@/lib/availability";
+import { assignStylist, getAvailableSlots, getHoursSlots } from "@/lib/availability";
+import { getSiteCatalog } from "@/lib/catalog";
 import {
   isSiteApiConfigured,
   siteDepositAmount,
@@ -55,10 +56,17 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "First name and last name are required." }, { status: 400 });
   }
 
-  const store = await readStore();
-  const service = store.services.find((s) => s.id === body.serviceId);
+  const [store, catalog] = await Promise.all([readStore(), getSiteCatalog()]);
+  const service =
+    catalog.services.find(
+      (s) => s.id === body.serviceId || s.slug === body.serviceId,
+    ) ??
+    store.services.find(
+      (s) => s.id === body.serviceId || s.slug === body.serviceId,
+    );
   const style = body.styleId
-    ? store.styles.find((s) => s.id === body.styleId)
+    ? catalog.styles.find((s) => s.id === body.styleId) ??
+      store.styles.find((s) => s.id === body.styleId)
     : null;
 
   if (!service) {
@@ -67,6 +75,11 @@ export async function POST(request: NextRequest) {
 
   const durationMin = style?.durationMin ?? service.durationMin;
   const price = style?.priceFrom ?? service.priceFrom;
+  const hoursSlots = getHoursSlots({
+    date: body.date,
+    durationMin,
+    appointments: store.appointments,
+  });
   const stylist =
     (body.stylistId
       ? store.stylists.find((s) => s.id === body.stylistId)
@@ -78,27 +91,29 @@ export async function POST(request: NextRequest) {
       durationMin,
       appointments: store.appointments,
       serviceId: service.id,
-    });
+    }) ??
+    store.stylists[0] ??
+    catalog.stylists[0];
 
-  if (!stylist) {
-    return Response.json(
-      { error: "That time is no longer available." },
-      { status: 409 },
-    );
-  }
-
-  const slots = getAvailableSlots({
-    stylist,
-    date: body.date,
-    durationMin,
-    appointments: store.appointments,
-  });
+  const stylistSlots = stylist
+    ? getAvailableSlots({
+        stylist,
+        date: body.date,
+        durationMin,
+        appointments: store.appointments,
+      })
+    : [];
+  const slots = hoursSlots.length ? hoursSlots : stylistSlots;
 
   if (!slots.includes(body.time)) {
     return Response.json(
       { error: "That time is no longer available." },
       { status: 409 },
     );
+  }
+
+  if (!stylist) {
+    return Response.json({ error: "No chair is configured." }, { status: 409 });
   }
 
   const now = new Date().toISOString();
@@ -119,7 +134,7 @@ export async function POST(request: NextRequest) {
         phone: body.customerPhone.trim().slice(0, 20),
         date: body.date,
         time: body.time.length === 5 ? body.time : body.time.slice(0, 5),
-        service: service.name,
+        service: service.productId ?? service.name,
         notes: (body.notes ?? "").trim() || undefined,
         metadata: {
           style: style?.name,

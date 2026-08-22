@@ -1,13 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Service, StyleLook } from "@/lib/types";
-import { cn, formatDuration, formatPrice, formatDate, formatTime } from "@/lib/format";
+import { cn, formatDuration, formatListedPrice, formatPrice, formatDate, formatTime } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { Media } from "@/components/ui/media";
 import { site } from "@/lib/site";
-import { warmBlur } from "@/lib/blur";
 
 function todayISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
@@ -70,6 +69,7 @@ export function BookingWizard() {
     notes: "",
   });
   const [depositAmount, setDepositAmount] = useState(0);
+  const [currency, setCurrency] = useState("USD");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const quickDays = useMemo(() => upcomingOpenDays(), []);
@@ -81,6 +81,7 @@ export function BookingWizard() {
         setServices(data.services);
         setStyles(data.styles);
         setDepositAmount(Number(data.depositAmount ?? 0));
+        setCurrency(data.currency || "USD");
         const svcParam = params.get("service");
         const styleParam = params.get("style");
         if (svcParam) {
@@ -214,22 +215,14 @@ export function BookingWizard() {
               )}
             >
               <span className="relative h-12 w-12 shrink-0 overflow-hidden bg-paper">
-                <Image
-                  src={s.image}
-                  alt=""
-                  fill
-                  placeholder="blur"
-                  blurDataURL={warmBlur}
-                  sizes="48px"
-                  className="object-cover"
-                />
+                <Media src={s.image} alt="" sizes="48px" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-display text-xl leading-tight">
                   {s.name}
                 </span>
                 <span className="mt-0.5 block text-xs text-muted">
-                  from {formatPrice(s.priceFrom)} · {formatDuration(s.durationMin, s.durationMax)}
+                  from {formatListedPrice(s.priceFrom, s.currency || currency, s.priceLabel)} · {formatDuration(s.durationMin, s.durationMax)}
                 </span>
               </span>
             </button>
@@ -249,7 +242,7 @@ export function BookingWizard() {
               <option value="">Decide in the chair</option>
               {styleChoices.map((s) => (
                 <option key={s.id} value={s.id}>
-                  {s.name} · from {formatPrice(s.priceFrom)}
+                  {s.name} · from {formatListedPrice(s.priceFrom, currency)}
                 </option>
               ))}
             </select>
@@ -389,7 +382,7 @@ export function BookingWizard() {
         </p>
         {service ? (
           <p className="mt-2 font-display text-2xl">
-            from {formatPrice(price)}
+            from {formatListedPrice(price, service?.currency || currency, service?.priceLabel)}
             <span className="ml-2 text-base text-muted">
               · {formatDuration(durationMin)}
             </span>

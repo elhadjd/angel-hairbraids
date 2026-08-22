@@ -17,8 +17,51 @@ export function weekdayFromISO(date: string) {
   return new Date(y, m - 1, d).getDay();
 }
 
+function parseHourLabel(label: string) {
+  const match = label.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+  if (!match) return null;
+  let hour = Number(match[1]);
+  const minutes = Number(match[2] ?? 0);
+  const mer = match[3]?.toUpperCase();
+  if (mer === "PM" && hour < 12) hour += 12;
+  if (mer === "AM" && hour === 12) hour = 0;
+  return hour * 60 + minutes;
+}
+
+export function hoursForDate(date: string) {
+  const weekday = weekdayFromISO(date);
+  const entry = site.hours[(weekday + 6) % 7];
+  if (!entry?.open || !entry?.close) return null;
+  const start = parseHourLabel(entry.open);
+  const end = parseHourLabel(entry.close);
+  if (start == null || end == null || end <= start) return null;
+  return { start, end };
+}
+
 export function isSalonOpen(date: string) {
-  return weekdayFromISO(date) !== site.closedWeekday;
+  return hoursForDate(date) != null && weekdayFromISO(date) !== site.closedWeekday;
+}
+
+export function getHoursSlots(input: {
+  date: string;
+  durationMin: number;
+  appointments: Appointment[];
+}) {
+  const hours = hoursForDate(input.date);
+  if (!hours || !isSalonOpen(input.date)) return [];
+  const busy = input.appointments
+    .filter((a) => a.date === input.date && a.status !== "cancelled")
+    .map((a) => {
+      const s = toMinutes(a.time);
+      return { start: s, end: s + a.durationMin };
+    });
+  const slots: string[] = [];
+  for (let t = hours.start; t + input.durationMin <= hours.end; t += 30) {
+    const slotEnd = t + input.durationMin;
+    const overlaps = busy.some((b) => t < b.end && slotEnd > b.start);
+    if (!overlaps) slots.push(fromMinutes(t));
+  }
+  return slots;
 }
 
 export function stylistsForService(stylists: Stylist[], serviceId?: string | null) {

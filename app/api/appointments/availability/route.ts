@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { readStore } from "@/lib/store";
-import { getAvailableSlots, getSalonSlots } from "@/lib/availability";
+import { getAvailableSlots, getHoursSlots, getSalonSlots } from "@/lib/availability";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -28,6 +28,15 @@ export async function GET(request: NextRequest) {
         appointments: store.appointments,
       }),
     });
+  }
+
+  const salonHours = getHoursSlots({
+    date,
+    durationMin: duration,
+    appointments: store.appointments,
+  });
+  if (salonHours.length) {
+    return Response.json({ slots: salonHours });
   }
 
   return Response.json({

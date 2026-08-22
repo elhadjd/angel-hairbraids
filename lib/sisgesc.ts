@@ -47,19 +47,43 @@ export function siteDepositAmount() {
   return Number.isFinite(n) && n >= 0.01 ? n : 0;
 }
 
+function missingConfig(): SiteApiResult {
+  return {
+    ok: false,
+    status: 503,
+    data: { message: "SITE_API_HOST and SITE_API_KEY are not configured." },
+  };
+}
+
+export async function siteApiGet(
+  path: string,
+  query: Record<string, string | number | boolean | undefined> = {},
+): Promise<SiteApiResult> {
+  const host = apiHost();
+  const key = apiKey();
+  if (!host || !key) return missingConfig();
+
+  const params = new URLSearchParams();
+  for (const [name, value] of Object.entries(query)) {
+    if (value === undefined || value === "") continue;
+    params.set(name, String(value));
+  }
+  const qs = params.toString();
+  const res = await fetch(`${host}${path}${qs ? `?${qs}` : ""}`, {
+    headers: { Accept: "application/json", key },
+    next: { revalidate: 60 },
+  });
+  const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  return { ok: res.ok, status: res.status, data };
+}
+
 async function siteApiPost(
   path: string,
   body: Record<string, unknown>,
 ): Promise<SiteApiResult> {
   const host = apiHost();
   const key = apiKey();
-  if (!host || !key) {
-    return {
-      ok: false,
-      status: 503,
-      data: { message: "SITE_API_HOST and SITE_API_KEY are not configured." },
-    };
-  }
+  if (!host || !key) return missingConfig();
 
   const res = await fetch(`${host}${path}`, {
     method: "POST",
@@ -73,6 +97,56 @@ async function siteApiPost(
 
   const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   return { ok: res.status === 201 || res.ok, status: res.status, data };
+}
+
+export function unwrapList(payload: unknown): Record<string, unknown>[] {
+  if (Array.isArray(payload)) {
+    return payload.filter((item) => item && typeof item === "object") as Record<
+      string,
+      unknown
+    >[];
+  }
+  if (!payload || typeof payload !== "object") return [];
+  const record = payload as Record<string, unknown>;
+  const candidates = [record.data, record.items, record.products, record.media];
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      return candidate.filter((item) => item && typeof item === "object") as Record<
+        string,
+        unknown
+      >[];
+    }
+    if (candidate && typeof candidate === "object") {
+      const nested = unwrapList(candidate);
+      if (nested.length) return nested;
+    }
+  }
+  return [];
+}
+
+export async function fetchSiteMedia(query: Record<string, string | number | boolean | undefined> = {}) {
+  return siteApiGet("/api/site/media", query);
+}
+
+export async function fetchSiteProducts() {
+  const primary = await siteApiGet("/api/site/products");
+  if (primary.ok || primary.status !== 404) return primary;
+  return siteApiGet("/api/site/catalog/products");
+}
+
+export async function fetchCatalogPriceLists() {
+  return siteApiGet("/api/site/catalog-price-lists");
+}
+
+export async function fetchErpPriceLists() {
+  return siteApiGet("/api/site/price-lists");
+}
+
+export async function quoteProductPrice(productId: number, quantity = 1) {
+  return siteApiPost("/api/site/price-lists/quote", {
+    product_id: productId,
+    quantity,
+  });
 }
 
 export async function submitSiteContact(payload: ContactPayload) {

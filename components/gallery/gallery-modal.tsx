@@ -1,11 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect } from "react";
 import type { GalleryItem } from "@/lib/types";
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/button";
-import { warmBlur } from "@/lib/blur";
+import { Media } from "@/components/ui/media";
 
 export function GalleryModal({
   item,
@@ -26,6 +25,10 @@ export function GalleryModal({
     };
   }, [onClose]);
 
+  const bookHref = item.serviceId
+    ? `/book?service=${item.serviceId}${item.styleId ? `&style=${item.styleId}` : ""}`
+    : item.buttonUrl || "/book";
+
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/70 p-0 backdrop-blur-sm sm:items-center sm:p-8">
       <button
@@ -36,38 +39,41 @@ export function GalleryModal({
       />
       <article className="relative grid max-h-[92svh] w-full max-w-5xl overflow-y-auto overflow-x-hidden bg-ivory sm:grid-cols-2 sm:overflow-hidden">
         <div className="relative aspect-[4/5] max-h-[42svh] sm:max-h-none sm:aspect-auto sm:min-h-[640px]">
-          <Image
+          <Media
             src={item.image}
             alt={item.title}
-            fill
-            placeholder="blur"
-            blurDataURL={warmBlur}
+            type={item.type}
             sizes="(max-width: 640px) 100vw, 50vw"
-            className="object-cover"
           />
         </div>
         <div className="flex flex-col justify-between p-5 sm:p-12">
           <div>
             <p className="kicker">{item.category}</p>
             <h3 className="mt-4 font-display text-4xl">{item.title}</h3>
-            <p className="mt-4 text-sm leading-relaxed text-muted">
-              {item.description}
-            </p>
-            <dl className="mt-8 space-y-3 border-t border-gold/25 pt-6 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-muted">Duration</dt>
-                <dd>{item.durationLabel}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted">Starting at</dt>
-                <dd>{formatPrice(item.priceFrom)}</dd>
-              </div>
-            </dl>
+            {item.description ? (
+              <p className="mt-4 text-sm leading-relaxed text-muted">
+                {item.description}
+              </p>
+            ) : null}
+            {item.durationLabel || item.priceFrom > 0 ? (
+              <dl className="mt-8 space-y-3 border-t border-gold/25 pt-6 text-sm">
+                {item.durationLabel ? (
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Duration</dt>
+                    <dd>{item.durationLabel}</dd>
+                  </div>
+                ) : null}
+                {item.priceFrom > 0 ? (
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Starting at</dt>
+                    <dd>{formatPrice(item.priceFrom)}</dd>
+                  </div>
+                ) : null}
+              </dl>
+            ) : null}
           </div>
           <div className="mt-10 flex flex-col gap-3">
-            <Button href={`/book?service=${item.serviceId}&style=${item.styleId}`}>
-              Book This Style
-            </Button>
+            <Button href={bookHref}>{item.buttonLabel || "Book This Style"}</Button>
             <button
               type="button"
               onClick={onClose}

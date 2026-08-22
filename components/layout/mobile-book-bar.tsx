@@ -6,7 +6,7 @@ import { site } from "@/lib/site";
 
 export function MobileBookBar() {
   const pathname = usePathname();
-  if (pathname.startsWith("/book") || pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/book")) return null;
 
   return (
     <div

@@ -72,7 +72,7 @@ export function Footer() {
             <a href={site.instagram} target="_blank" rel="noreferrer">
               Instagram
             </a>
-            <Link href="/admin">Atelier</Link>
+            <Link href="/contact">Visit</Link>
           </div>
         </div>
       </Container>

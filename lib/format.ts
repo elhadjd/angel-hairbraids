@@ -1,9 +1,25 @@
-export function formatPrice(amount: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
+export function formatPrice(amount: number, currency = "USD") {
+  const code = (currency || "USD").toUpperCase();
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: code === "USD" || code === "EUR" ? 0 : 2,
+    }).format(amount);
+  } catch {
+    return `${amount} ${code}`;
+  }
+}
+
+export function formatListedPrice(
+  amount: number | null | undefined,
+  currency = "USD",
+  label?: string | null,
+) {
+  if (label && (amount == null || amount === 0)) return label;
+  if (amount == null) return label || "";
+  const money = formatPrice(amount, currency);
+  return label ? `${money} · ${label}` : money;
 }
 
 export function formatDuration(min: number, max = min) {

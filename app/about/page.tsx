@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { SiteShell } from "@/components/layout/site-shell";
 import { Button, Container } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { FinalCta } from "@/components/home/final-cta";
-import { warmBlur } from "@/lib/blur";
+import { Media } from "@/components/ui/media";
+import { getSiteCatalog } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "The Salon",
@@ -12,19 +12,24 @@ export const metadata: Metadata = {
     "The story of Angel African Hair Braiding — a Columbus, Ohio atelier devoted to African braiding, culture, and modern luxury.",
 };
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const catalog = await getSiteCatalog();
+  const hero =
+    catalog.media.about[0] ??
+    catalog.media.home[0] ??
+    catalog.media.featured[0];
   return (
     <SiteShell>
       <section className="relative mt-0 min-h-[70vh] bg-espresso text-ivory">
-        <Image
-          src="/images/salon-interior.jpg"
-          alt="The Angel African Hair Braiding salon interior"
-          fill
+        <Media
+          src={hero?.mediaUrl || "/images/salon-interior.jpg"}
+          alt={hero?.title || "The Angel African Hair Braiding salon interior"}
+          type={hero?.type}
           preload
-          placeholder="blur"
-          blurDataURL={warmBlur}
-          className="object-cover opacity-50"
           sizes="100vw"
+          className="object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/40 to-espresso/20" />
         <Container className="relative flex min-h-[70vh] flex-col justify-end pb-16 pt-32">
