@@ -58,6 +58,21 @@ export function isSiteApiConfigured() {
   return Boolean(apiHost() && apiKey());
 }
 
+/** Turn SISGESC storage paths into absolute URLs the browser can load. */
+export function resolveMediaUrl(src: string, host = apiHost()) {
+  let value = src.trim();
+  if (!value || value === "null" || value === "undefined") return "";
+  if (value.startsWith("//")) value = `http:${value}`;
+  if (/^https?:\/[^/]/i.test(value)) {
+    value = value.replace(/^http:\//i, "http://").replace(/^https:\//i, "https://");
+  }
+  if (/^https?:\/\//i.test(value)) return value;
+  if (!host) return value.startsWith("/") ? value : "";
+  if (value.startsWith("/")) return `${host}${value}`;
+  if (/^(storage|uploads|sites)\b/i.test(value)) return `${host}/${value}`;
+  return value.startsWith("/") ? `${host}${value}` : value;
+}
+
 export function siteDepositAmount() {
   const n = Number(process.env.SITE_API_DEPOSIT_AMOUNT ?? 0);
   return Number.isFinite(n) && n >= 0.01 ? n : 0;

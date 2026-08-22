@@ -6,6 +6,7 @@ import {
   fetchSiteProducts,
   isSiteApiConfigured,
   quoteProductPrice,
+  resolveMediaUrl,
   resolveSiteApiHost,
   unwrapList,
 } from "./sisgesc";
@@ -59,24 +60,26 @@ function pickImage(raw: Record<string, unknown>) {
   const nested = asRecord(raw.image);
   const firstImage = Array.isArray(raw.images) ? asRecord(raw.images[0]) : null;
   const firstMedia = Array.isArray(raw.media) ? asRecord(raw.media[0]) : null;
-  return asString(
-    raw.media_url,
-    raw.thumbnail_url,
-    raw.featured_image,
-    raw.image_url,
-    raw.cover,
-    raw.photo,
-    raw.thumbnail,
-    typeof raw.image === "string" ? raw.image : "",
-    nested?.url,
-    nested?.media_url,
-    nested?.src,
-    firstImage?.url,
-    firstImage?.media_url,
-    firstImage?.src,
-    firstMedia?.url,
-    firstMedia?.media_url,
-    firstMedia?.src,
+  return resolveMediaUrl(
+    asString(
+      raw.media_url,
+      raw.thumbnail_url,
+      raw.featured_image,
+      raw.image_url,
+      raw.cover,
+      raw.photo,
+      raw.thumbnail,
+      typeof raw.image === "string" ? raw.image : "",
+      nested?.url,
+      nested?.media_url,
+      nested?.src,
+      firstImage?.url,
+      firstImage?.media_url,
+      firstImage?.src,
+      firstMedia?.url,
+      firstMedia?.media_url,
+      firstMedia?.src,
+    ),
   );
 }
 
@@ -126,8 +129,8 @@ function mapMediaAsset(
     type: asString(raw.type) || "image",
     title: asString(raw.title, raw.name),
     description: asString(raw.description),
-    mediaUrl: asString(raw.media_url, raw.url, raw.src, pickImage(raw)),
-    thumbnailUrl: asString(raw.thumbnail_url, raw.thumb_url),
+    mediaUrl: resolveMediaUrl(asString(raw.media_url, raw.url, raw.src, pickImage(raw))),
+    thumbnailUrl: resolveMediaUrl(asString(raw.thumbnail_url, raw.thumb_url)),
     placement: asString(
       raw.placement,
       attachedGroup?.placement,
