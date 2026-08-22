@@ -108,17 +108,16 @@ export function BookingWizard() {
   const price = style?.priceFrom ?? service?.priceFrom ?? 0;
   const styleChoices = styles.filter((s) => !serviceId || s.serviceId === serviceId);
 
-  const slotKey =
-    date && serviceId ? `${date}:${serviceId}:${durationMin}` : "";
+  const slotKey = date ? `${date}:${serviceId ?? "any"}:${durationMin}` : "";
 
   useEffect(() => {
-    if (!slotKey || !date || !serviceId) return;
+    if (!slotKey || !date) return;
     let active = true;
     const query = new URLSearchParams({
       date,
       duration: String(durationMin),
-      serviceId,
     });
+    if (serviceId) query.set("serviceId", serviceId);
     fetch(`/api/appointments/availability?${query}`)
       .then((r) => r.json())
       .then((d) => {
@@ -139,7 +138,6 @@ export function BookingWizard() {
   async function confirm(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!serviceId) return setError("Choose a service.");
     if (!date) return setError("Choose a date.");
     if (!time) return setError("Choose a time.");
     if (!form.firstName || !form.lastName || !form.customerPhone || !form.customerEmail) {
@@ -191,21 +189,39 @@ export function BookingWizard() {
         Book in one go.
       </h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
-        Pick a service, a day, and a time. We seat you with the next available
-        specialist — no extra steps.
+        Pick a day and a time. A service is optional — you can decide in the
+        chair.
       </p>
 
       <section className="mt-10">
         <SectionLabel n="01" title="Service" />
-        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <p className="mt-1 text-sm text-muted">Optional — skip if you prefer to decide in the chair.</p>
+        <button
+          type="button"
+          onClick={() => {
+            setServiceId(null);
+            setStyleId(null);
+          }}
+          className={cn(
+            "mt-4 w-full border px-3 py-3 text-left text-sm transition-colors sm:w-auto",
+            !serviceId ? "border-gold bg-gold/10" : "border-gold/25 hover:border-gold/60",
+          )}
+        >
+          Decide in the chair
+        </button>
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {services.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => {
+                if (serviceId === s.id) {
+                  setServiceId(null);
+                  setStyleId(null);
+                  return;
+                }
                 setServiceId(s.id);
                 if (style && style.serviceId !== s.id) setStyleId(null);
-                setTime(null);
               }}
               className={cn(
                 "flex min-h-16 items-center gap-3 border px-3 py-2.5 text-left transition-colors",
@@ -299,9 +315,7 @@ export function BookingWizard() {
         </label>
 
         <div className="mt-5">
-          {!serviceId ? (
-            <p className="text-sm text-muted">Choose a service to see open times.</p>
-          ) : !date ? (
+          {!date ? (
             <p className="text-sm text-muted">Choose a day to see open times.</p>
           ) : slotsLoading ? (
             <p className="text-sm text-muted">Checking the chair…</p>
@@ -376,7 +390,7 @@ export function BookingWizard() {
 
       <div className="mt-10 border border-gold/30 bg-paper/50 p-5 sm:p-6">
         <p className="text-sm text-muted">
-          {service ? service.name : "Choose a service"}
+          {service ? service.name : "Service to be decided"}
           {style ? ` · ${style.name}` : ""}
           {date && time ? ` · ${formatDate(date)} at ${formatTime(time)}` : ""}
         </p>

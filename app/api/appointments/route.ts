@@ -35,7 +35,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as BookingPayload;
   const required = [
-    "serviceId",
     "date",
     "time",
     "customerPhone",
@@ -58,24 +57,27 @@ export async function POST(request: NextRequest) {
   }
 
   const [store, catalog] = await Promise.all([readStore(), getSiteCatalog()]);
-  const service =
-    catalog.services.find(
-      (s) => s.id === body.serviceId || s.slug === body.serviceId,
-    ) ??
-    store.services.find(
-      (s) => s.id === body.serviceId || s.slug === body.serviceId,
-    );
+  const requestedService = (body.serviceId ?? "").trim();
+  const service = requestedService
+    ? catalog.services.find(
+        (s) => s.id === requestedService || s.slug === requestedService,
+      ) ??
+      store.services.find(
+        (s) => s.id === requestedService || s.slug === requestedService,
+      ) ??
+      null
+    : null;
   const style = body.styleId
     ? catalog.styles.find((s) => s.id === body.styleId) ??
       store.styles.find((s) => s.id === body.styleId)
     : null;
 
-  if (!service) {
+  if (requestedService && !service) {
     return Response.json({ error: "Invalid service" }, { status: 400 });
   }
 
-  const durationMin = style?.durationMin ?? service.durationMin;
-  const price = style?.priceFrom ?? service.priceFrom;
+  const durationMin = style?.durationMin ?? service?.durationMin ?? 180;
+  const price = style?.priceFrom ?? service?.priceFrom ?? 0;
   const hoursSlots = getHoursSlots({
     date: body.date,
     durationMin,
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
       time: body.time,
       durationMin,
       appointments: store.appointments,
-      serviceId: service.id,
+      serviceId: service?.id,
     }) ??
     store.stylists[0] ??
     catalog.stylists[0];
@@ -134,7 +136,7 @@ export async function POST(request: NextRequest) {
       phone: body.customerPhone.trim().slice(0, 20),
       date: body.date,
       time: body.time.length === 5 ? body.time : body.time.slice(0, 5),
-      service: service.productId ?? service.name,
+      service: service?.productId ?? service?.name,
       notes: (body.notes ?? "").trim() || undefined,
       metadata: {
         style: style?.name,
@@ -175,7 +177,7 @@ export async function POST(request: NextRequest) {
   const appointment: Appointment = {
     id: createId("apt"),
     reference: createReference(),
-    serviceId: service.id,
+    serviceId: service?.id ?? "",
     styleId: style?.id ?? null,
     stylistId: stylist.id,
     date: body.date,

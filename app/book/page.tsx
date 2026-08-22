@@ -7,7 +7,7 @@ import { BookingWizard } from "@/components/booking/wizard";
 export const metadata: Metadata = {
   title: "Book Your Appointment",
   description:
-    "Reserve your African hair braiding appointment at Angel African Hair Braiding in Columbus, Ohio. One short form — service, date, and your details.",
+    "Reserve your African hair braiding appointment at Angel African Hair Braiding in Columbus, Ohio. One short form — date, time, and your details. Service is optional.",
 };
 
 export default function BookPage() {

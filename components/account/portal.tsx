@@ -268,7 +268,9 @@ function AppointmentCard({
         <p className="text-[11px] tracking-[0.22em] uppercase text-gold">
           {a.reference} · {a.status.replace("_", " ")}
         </p>
-        <p className="mt-1 font-display text-2xl">{service?.name}</p>
+        <p className="mt-1 font-display text-2xl">
+          {service?.name ?? "To be decided"}
+        </p>
         <p className="text-sm text-muted">
           {style?.name ? `${style.name} · ` : ""}
           {stylist?.name} · {formatDate(a.date)} · {formatTime(a.time)} ·{" "}

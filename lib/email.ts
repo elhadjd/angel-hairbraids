@@ -6,11 +6,14 @@ import type { Appointment, Service, Stylist } from "./types";
 
 export function confirmationHtml(input: {
   appointment: Appointment;
-  service: Service;
+  service: Service | null;
   stylist: Stylist;
   styleName?: string;
 }) {
   const { appointment, service, stylist, styleName } = input;
+  const serviceLabel = service
+    ? `${service.name}${styleName ? ` — ${styleName}` : ""}`
+    : "To be decided in the chair";
   return `<!doctype html>
 <html>
   <body style="margin:0;background:#F4EFE6;font-family:Georgia,serif;color:#14110E;">
@@ -41,7 +44,7 @@ export function confirmationHtml(input: {
                 <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">When</p>
                 <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${formatDate(appointment.date)} · ${formatTime(appointment.time)}</p>
                 <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Service</p>
-                <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${service.name}${styleName ? ` — ${styleName}` : ""}</p>
+                <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${serviceLabel}</p>
                 <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Stylist</p>
                 <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${stylist.name}</p>
                 <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Investment</p>

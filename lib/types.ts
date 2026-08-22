@@ -212,7 +212,7 @@ export type StoreData = {
 };
 
 export type BookingPayload = {
-  serviceId: string;
+  serviceId?: string | null;
   styleId: string | null;
   stylistId?: string | null;
   date: string;
