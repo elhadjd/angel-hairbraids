@@ -27,7 +27,7 @@ SITE_API_HOST=http://localhost:8080
 SITE_API_KEY="your-site-api-key"
 ```
 
-`SITE_API_HOST` is the ERP origin only. Do **not** add `/api/site` — the app already calls `/api/site/media`, `/api/site/products`, `/api/site/appointments/submit`, and so on. Quote the key if it contains `+`, `/`, or `=`.
+`SITE_API_HOST` is the ERP origin only (`http://localhost:8080`). Do **not** add `/api/site`. JSON calls go to `{SITE_API_HOST}/api/site/...`. Product images go to `{SITE_API_HOST}/produtos/image/...` (never the Next.js host). Quote the key if it contains `+`, `/`, or `=`.
 
 The key is added only on the server (`key` header and query). It is never sent to the browser.
 

@@ -9,7 +9,7 @@ function siteApiHostPattern() {
       {
         protocol: url.protocol.replace(":", "") as "http" | "https",
         hostname: url.hostname,
-        pathname: "/storage/**" as const,
+        pathname: "/**" as const,
       },
     ];
   } catch {

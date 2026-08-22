@@ -40,9 +40,6 @@ export function resolveSiteApiHost(raw = process.env.SITE_API_HOST ?? "") {
   host = host.replace(/\/+$/, "");
   host = host.replace(/\/api\/site$/i, "");
   host = host.replace(/\/+$/, "");
-  if (/^https?:\/\/localhost\b/i.test(host)) {
-    host = host.replace(/localhost/i, "127.0.0.1");
-  }
   return host;
 }
 
@@ -58,7 +55,15 @@ export function isSiteApiConfigured() {
   return Boolean(apiHost() && apiKey());
 }
 
-/** Turn SISGESC storage paths into absolute URLs the browser can load. */
+function isLocalPublicAsset(path: string) {
+  return /^\/(?:images\/|icon|pattern)/.test(path);
+}
+
+function isSisgescFilePath(path: string) {
+  return /^\/(?:produtos\/|storage\/|uploads\/|sites\/|media\/)/i.test(path);
+}
+
+/** Files live on the ERP origin, never on the Next.js host. */
 export function resolveMediaUrl(src: string, host = apiHost()) {
   let value = src.trim();
   if (!value || value === "null" || value === "undefined") return "";
@@ -66,11 +71,28 @@ export function resolveMediaUrl(src: string, host = apiHost()) {
   if (/^https?:\/[^/]/i.test(value)) {
     value = value.replace(/^http:\//i, "http://").replace(/^https:\//i, "https://");
   }
-  if (/^https?:\/\//i.test(value)) return value;
-  if (!host) return value.startsWith("/") ? value : "";
-  if (value.startsWith("/")) return `${host}${value}`;
-  if (/^(storage|uploads|sites)\b/i.test(value)) return `${host}/${value}`;
-  return value.startsWith("/") ? `${host}${value}` : value;
+  if (isLocalPublicAsset(value)) return value;
+
+  const origin = host.replace(/\/+$/, "");
+
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      const url = new URL(value);
+      if (!origin) return url.toString();
+      const api = new URL(origin);
+      if (url.origin === api.origin) return `${api.origin}${url.pathname}${url.search}`;
+      if (isSisgescFilePath(url.pathname)) {
+        return `${api.origin}${url.pathname}${url.search}`;
+      }
+      return url.toString();
+    } catch {
+      return value;
+    }
+  }
+
+  const path = value.startsWith("/") ? value : `/${value}`;
+  if (!origin) return path;
+  return `${origin}${path}`;
 }
 
 export function siteDepositAmount() {
@@ -92,10 +114,15 @@ function asData(parsed: unknown): Record<string, unknown> {
   return {};
 }
 
+function siteApiPath(path: string) {
+  const suffix = path.replace(/^\/+/, "").replace(/^api\/site\/?/i, "");
+  return `/api/site/${suffix}`;
+}
+
 function siteUrl(path: string, query: Record<string, string | number | boolean | undefined> = {}) {
   const host = apiHost();
   const key = apiKey();
-  const url = new URL(`${host}${path.startsWith("/") ? path : `/${path}`}`);
+  const url = new URL(`${host}${siteApiPath(path)}`);
   url.searchParams.set("key", key);
   for (const [name, value] of Object.entries(query)) {
     if (value === undefined || value === "") continue;
@@ -207,32 +234,32 @@ export function unwrapList(payload: unknown): Record<string, unknown>[] {
 }
 
 export async function fetchSiteMedia(query: Record<string, string | number | boolean | undefined> = {}) {
-  return siteApiGet("/api/site/media", query);
+  return siteApiGet("media", query);
 }
 
 export async function fetchSiteProducts() {
-  const primary = await siteApiGet("/api/site/products");
+  const primary = await siteApiGet("products");
   if (primary.ok || primary.status !== 404) return primary;
-  return siteApiGet("/api/site/catalog/products");
+  return siteApiGet("catalog/products");
 }
 
 export async function fetchCatalogPriceLists() {
-  return siteApiGet("/api/site/catalog-price-lists");
+  return siteApiGet("catalog-price-lists");
 }
 
 export async function fetchErpPriceLists() {
-  return siteApiGet("/api/site/price-lists");
+  return siteApiGet("price-lists");
 }
 
 export async function quoteProductPrice(productId: number, quantity = 1) {
-  return siteApiPost("/api/site/price-lists/quote", {
+  return siteApiPost("price-lists/quote", {
     product_id: productId,
     quantity,
   });
 }
 
 export async function submitSiteContact(payload: ContactPayload) {
-  return siteApiPost("/api/site/contacts/submit", {
+  return siteApiPost("contacts/submit", {
     name: payload.name,
     email: payload.email,
     phone: payload.phone,
@@ -272,14 +299,14 @@ export async function submitSiteAppointment(payload: AppointmentPayload) {
     body.cancel_url = `${payload.origin}/book/cancelled`;
   }
 
-  return siteApiPost("/api/site/appointments/submit", body);
+  return siteApiPost("appointments/submit", body);
 }
 
 export async function confirmSiteAppointmentPayment(input: {
   appointmentId: number;
   sessionId: string;
 }) {
-  return siteApiPost("/api/site/appointments/confirm-payment", {
+  return siteApiPost("appointments/confirm-payment", {
     appointment_id: input.appointmentId,
     session_id: input.sessionId,
   });
