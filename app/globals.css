@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --ivory: #f3ece1;
-  --paper: #e7dccb;
-  --ink: #14110e;
-  --espresso: #1b1612;
-  --gold: #c4a574;
-  --gold-bright: #d8c09a;
-  --copper: #a56b45;
-  --clay: #8c4a32;
-  --muted: #6f6559;
-  --line: rgba(196, 165, 116, 0.32);
+  --ivory: #f7f3ec;
+  --paper: #e6dccf;
+  --ink: #121212;
+  --espresso: #1a1024;
+  --violet: #6a2b91;
+  --gold: #b84592;
+  --gold-bright: #d36ba8;
+  --copper: #8e348c;
+  --clay: #5a2278;
+  --muted: #6e6570;
+  --line: rgba(106, 43, 145, 0.22);
+  --brand-fill: linear-gradient(115deg, #6a2b91 0%, #8d348f 48%, #b84592 100%);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -19,6 +21,7 @@
   --color-paper: var(--paper);
   --color-ink: var(--ink);
   --color-espresso: var(--espresso);
+  --color-violet: var(--violet);
   --color-gold: var(--gold);
   --color-gold-bright: var(--gold-bright);
   --color-copper: var(--copper);
@@ -54,8 +57,8 @@ video {
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--ink);
+  background: var(--violet);
+  color: #fff;
 }
 
 h1,
@@ -103,10 +106,19 @@ a {
   background: linear-gradient(
     90deg,
     transparent,
-    var(--gold) 18%,
+    var(--violet) 18%,
     var(--gold) 82%,
     transparent
   );
+}
+
+.brand-fill {
+  background: var(--brand-fill);
+  color: #fff;
+}
+
+.brand-fill:hover {
+  filter: brightness(1.06);
 }
 
 .pattern-veil {
@@ -128,7 +140,7 @@ a {
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #e7dccb 0%, #f3ece1 50%, #e7dccb 100%);
+  background: linear-gradient(90deg, #e6dccf 0%, #f7f3ec 50%, #e6dccf 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease infinite;
 }

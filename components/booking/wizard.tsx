@@ -280,7 +280,7 @@ export function BookingWizard() {
               className={cn(
                 "shrink-0 border px-3 py-2 text-left text-sm transition-colors",
                 date === iso
-                  ? "border-gold bg-gold text-ink"
+                  ? "brand-fill border-transparent"
                   : "border-gold/30 hover:border-gold",
               )}
             >
@@ -333,7 +333,7 @@ export function BookingWizard() {
                   className={cn(
                     "min-h-11 border px-2 py-2.5 text-sm transition-colors",
                     time === slot
-                      ? "border-gold bg-gold text-ink"
+                      ? "brand-fill border-transparent"
                       : "border-gold/30 hover:border-gold",
                   )}
                 >

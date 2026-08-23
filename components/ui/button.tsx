@@ -22,9 +22,9 @@ export function Button({
 }: Props) {
   const styles = cn(
     "inline-flex min-h-12 items-center justify-center gap-2 px-5 py-3.5 text-center text-[11px] tracking-[0.18em] uppercase transition-colors duration-300 disabled:opacity-40 sm:px-7 sm:tracking-[0.24em]",
-    variant === "gold" && "bg-gold text-ink hover:bg-gold-bright",
+    variant === "gold" && "brand-fill",
     variant === "ghost" &&
-      "border border-gold/50 text-gold hover:bg-gold hover:text-ink",
+      "border border-gold/50 text-gold hover:border-violet hover:bg-violet hover:text-white",
     variant === "ivory" && "bg-ivory text-ink hover:bg-white",
     variant === "ink" && "bg-ink text-ivory hover:bg-espresso",
     className,

@@ -16,43 +16,43 @@ export function confirmationHtml(input: {
     : "To be decided in the chair";
   return `<!doctype html>
 <html>
-  <body style="margin:0;background:#F4EFE6;font-family:Georgia,serif;color:#14110E;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F4EFE6;padding:40px 16px;">
+  <body style="margin:0;background:#F7F3EC;font-family:Georgia,serif;color:#121212;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F3EC;padding:40px 16px;">
       <tr>
         <td align="center">
-          <table width="560" cellpadding="0" cellspacing="0" style="background:#14110E;padding:40px 36px;">
+          <table width="560" cellpadding="0" cellspacing="0" style="background:#1A1024;padding:40px 36px;">
             <tr>
-              <td style="color:#C4A574;letter-spacing:0.32em;font-size:11px;text-transform:uppercase;">
+              <td style="color:#D36BA8;letter-spacing:0.32em;font-size:11px;text-transform:uppercase;">
                 Angel African Hair Braiding
               </td>
             </tr>
             <tr>
-              <td style="padding-top:18px;color:#F4EFE6;font-size:32px;line-height:1.2;">
+              <td style="padding-top:18px;color:#F7F3EC;font-size:32px;line-height:1.2;">
                 Your appointment is reserved.
               </td>
             </tr>
             <tr>
-              <td style="padding-top:16px;color:#D9D0C3;font-size:15px;line-height:1.7;font-family:Arial,sans-serif;">
+              <td style="padding-top:16px;color:#E6DCCF;font-size:15px;line-height:1.7;font-family:Arial,sans-serif;">
                 Hello ${appointment.customerName.split(" ")[0]}, we are honored to style you.
                 Please arrive 10 minutes early so we can settle you in with tea.
               </td>
             </tr>
             <tr>
-              <td style="padding-top:28px;border-top:1px solid rgba(196,165,116,0.3);">
-                <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Reference</p>
-                <p style="margin:6px 0 0;color:#F4EFE6;font-size:20px;">${appointment.reference}</p>
-                <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">When</p>
-                <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${formatDate(appointment.date)} · ${formatTime(appointment.time)}</p>
-                <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Service</p>
-                <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${serviceLabel}</p>
-                <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Stylist</p>
-                <p style="margin:6px 0 0;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">${stylist.name}</p>
-                <p style="margin:18px 0 0;color:#C4A574;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Investment</p>
-                <p style="margin:6px 0 18px;color:#F4EFE6;font-size:16px;font-family:Arial,sans-serif;">From ${formatPrice(appointment.price)} · deposit ${formatPrice(appointment.deposit.amount)} (${appointment.deposit.status})</p>
+              <td style="padding-top:28px;border-top:1px solid rgba(184,69,146,0.35);">
+                <p style="margin:18px 0 0;color:#D36BA8;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Reference</p>
+                <p style="margin:6px 0 0;color:#F7F3EC;font-size:20px;">${appointment.reference}</p>
+                <p style="margin:18px 0 0;color:#D36BA8;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">When</p>
+                <p style="margin:6px 0 0;color:#F7F3EC;font-size:16px;font-family:Arial,sans-serif;">${formatDate(appointment.date)} · ${formatTime(appointment.time)}</p>
+                <p style="margin:18px 0 0;color:#D36BA8;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Service</p>
+                <p style="margin:6px 0 0;color:#F7F3EC;font-size:16px;font-family:Arial,sans-serif;">${serviceLabel}</p>
+                <p style="margin:18px 0 0;color:#D36BA8;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Stylist</p>
+                <p style="margin:6px 0 0;color:#F7F3EC;font-size:16px;font-family:Arial,sans-serif;">${stylist.name}</p>
+                <p style="margin:18px 0 0;color:#D36BA8;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;font-family:Arial,sans-serif;">Investment</p>
+                <p style="margin:6px 0 18px;color:#F7F3EC;font-size:16px;font-family:Arial,sans-serif;">From ${formatPrice(appointment.price)} · deposit ${formatPrice(appointment.deposit.amount)} (${appointment.deposit.status})</p>
               </td>
             </tr>
             <tr>
-              <td style="color:#D9D0C3;font-size:13px;line-height:1.7;font-family:Arial,sans-serif;">
+              <td style="color:#E6DCCF;font-size:13px;line-height:1.7;font-family:Arial,sans-serif;">
                 ${site.address.street}<br/>
                 ${site.address.city}, ${site.address.state} ${site.address.zip}<br/>
                 ${site.phone}
