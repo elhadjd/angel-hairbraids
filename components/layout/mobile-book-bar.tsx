@@ -16,7 +16,7 @@ export function MobileBookBar() {
       <div className="grid grid-cols-[1fr_auto] gap-2">
         <Link
           href="/book"
-          className="flex h-12 items-center justify-center bg-gold px-3 text-center text-[11px] tracking-[0.18em] uppercase text-ink"
+          className="brand-fill flex h-12 items-center justify-center px-3 text-center text-[11px] tracking-[0.18em] uppercase"
         >
           Book Now
         </Link>

@@ -13,8 +13,8 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#14110E",
-          color: "#F3ECE1",
+          background: "linear-gradient(135deg, #1A1024 0%, #6A2B91 55%, #B84592 100%)",
+          color: "#F7F3EC",
           padding: 72,
         }}
       >
@@ -23,7 +23,7 @@ export default function OpenGraphImage() {
             display: "flex",
             letterSpacing: "0.4em",
             fontSize: 18,
-            color: "#C4A574",
+            color: "#F7F3EC",
             textTransform: "uppercase",
           }}
         >
@@ -38,7 +38,7 @@ export default function OpenGraphImage() {
               display: "flex",
               marginTop: 24,
               fontSize: 28,
-              color: "#D8C09A",
+              color: "#F7F3EC",
             }}
           >
             Where African Beauty Meets Modern Style.

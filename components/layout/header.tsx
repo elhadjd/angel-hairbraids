@@ -40,15 +40,15 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-          solid ? "bg-ivory/92 backdrop-blur-md shadow-[0_1px_0_rgba(196,165,116,0.25)]" : "bg-transparent",
+          solid ? "bg-ivory/92 backdrop-blur-md shadow-[0_1px_0_rgba(106,43,145,0.18)]" : "bg-transparent",
         )}
       >
         <div className="mx-auto flex h-[4.25rem] max-w-[1440px] items-center justify-between gap-3 px-4 sm:h-[4.5rem] sm:px-8 lg:px-12">
           <Link href="/" className="group flex items-center gap-3">
             <span
               className={cn(
-                "grid h-9 w-9 place-items-center border text-lg font-display transition-colors",
-                lightText ? "border-gold text-gold" : "border-gold text-ink",
+                "grid h-9 w-9 place-items-center rounded-full text-lg font-display transition-colors",
+                lightText ? "border border-gold text-gold" : "brand-fill",
               )}
             >
               A
@@ -104,7 +104,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
             </Link>
             <Link
               href="/book"
-              className="hidden bg-gold px-5 py-2.5 text-[11px] tracking-[0.24em] uppercase text-ink transition-colors hover:bg-gold-bright md:inline-flex"
+              className="brand-fill hidden px-5 py-2.5 text-[11px] tracking-[0.24em] uppercase md:inline-flex"
             >
               Book
             </Link>
@@ -175,7 +175,7 @@ export function Header({ inverted = false }: { inverted?: boolean }) {
             <Link
               href="/book"
               onClick={() => setOpen(false)}
-              className="flex h-12 items-center justify-center bg-gold text-[11px] tracking-[0.2em] uppercase text-ink"
+              className="brand-fill flex h-12 items-center justify-center text-[11px] tracking-[0.2em] uppercase"
             >
               Book Appointment
             </Link>
